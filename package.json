@@ -4,8 +4,9 @@
   "description": "boilerplate for scelloo backend services",
   "main": "server.js",
   "scripts": {
-    "test": "mocha  --recursive --timeout 10000",
-    "start": "nodemon start server.js"
+    "postinstall": "npm install -g pm2",
+    "start": "pm2 start pm2server.config.js",
+    "dev": "nodemon server.js"
   },
   "author": "",
   "license": "ISC",

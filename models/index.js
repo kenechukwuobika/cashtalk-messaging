@@ -9,6 +9,8 @@ const db = {};
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-
 db.messaging = require("./messaging")(sequelize, Sequelize);
+
+// Refresh Database
+// db.messaging.sync({ alter: true });
 module.exports = db;

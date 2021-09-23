@@ -1,14 +1,21 @@
 const sequelize = require("../config/database/connection");
 const Messaging = require("../models").messaging;
+const { generateUploadUrl } = require("../space/space");
 
 exports.messaging = async (req, res) => {
   await sequelize.transaction(async t => {
     const data = req.body;
     try {
-      await Messaging.create(data, { transaction: t });
+      const url = await generateUploadUrl();
+      await Messaging.create(
+        { ...data, fileAccessKey: url },
+        { transaction: t }
+      );
+
       res.status(200).send({
         success: true,
-        message: "Message Sent"
+        message: "Message Sent",
+        data: url
       });
     } catch (error) {
       res.status(500).send({

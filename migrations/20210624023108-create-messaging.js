@@ -1,4 +1,3 @@
-"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.sequelize
@@ -16,6 +15,10 @@ module.exports = {
             type: Sequelize.UUID
           },
           chat: {
+            type: Sequelize.STRING
+          },
+          fileAccessKey: {
+            allowNull: true,
             type: Sequelize.STRING
           },
           recipientId: {

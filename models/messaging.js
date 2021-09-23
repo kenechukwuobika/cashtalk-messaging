@@ -22,8 +22,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID
       },
       chat: {
-        allowNull: false,
+        allowNull: true,
         type: DataTypes.STRING
+      },
+      fileAccessKey: {
+        allowNull: true,
+        type: DataTypes.STRING,
+        validate: {
+          customValidator(value) {
+            if (value === null && this.chat === null) {
+              throw new Error("You cannot send an empty message");
+            }
+          }
+        }
       },
       recipientId: DataTypes.UUID
     },

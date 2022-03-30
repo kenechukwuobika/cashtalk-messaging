@@ -2,6 +2,15 @@ const sequelize = require("../config/database/connection");
 const Messaging = require("../models").messaging;
 const { generateUploadUrl } = require("../space/space");
 
+exports.getMessages = async (req, res) => {
+  const messages = await Messaging.findAll();
+  console.log(messages)
+  res.status(200).send({
+    success: true,
+    messages
+  });
+};
+
 exports.messaging = async (req, res) => {
   await sequelize.transaction(async t => {
     const data = req.body;

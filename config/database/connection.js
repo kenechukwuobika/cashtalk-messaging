@@ -12,11 +12,7 @@ const sequelize = new Sequelize(
     raw: true,
     port: config.port,
     seederStorage: process.env.SEEDER_STORAGE,
-    dialectOptions: {
-      ssl: {
-        ca: fs.readFileSync(`${__dirname}/ca-certificate.crt`)
-      }
-    },
+    dialectOptions: {},
     pool: {
       max: 5,
       min: 0,

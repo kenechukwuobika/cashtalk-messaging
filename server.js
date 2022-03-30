@@ -1,17 +1,32 @@
 const express = require("express");
 require("dotenv").config();
 const helmet = require("helmet");
-
 const app = express();
+const httpServer = require("http").createServer(app);
 const cors = require("cors");
-const amqp = require("amqplib");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
-const { insertIntoChat } = require("./eventCalls/chatCalls");
+const queue = require("./common/events/queue");
+const wrap = require('./utilities/middlewareWrapper');
+const checkToken = require('./common/middleware/checkToken');
+const Websocket = require("./socket/Websocket");
+const router = require("./routes");
+const io  = require('socket.io')(httpServer,{
+  cors: {
+    origin: '*',
+    methods: '*'
+  }
+});
 
-let channel;
-let connection;
-const QUEUE = "TestQueue";
+io.use(wrap(checkToken));
+
+io.on('connection', socket => {
+    const webSocket = new Websocket(io, socket);
+    webSocket.init();
+})
+// require("./routes/socketRoutes")(app, io);
+
+app.use('/api/v1', router);
 
 app.disable("etag");
 
@@ -27,30 +42,12 @@ app.use(
     extended: false
   })
 );
-require("./routes/routes")(app);
+
+global.io = io;
+global.socketUsers = [];
 
 app.get("/", (req, res) => {
   res.send(`BoilerPlate v.1.0 ${new Date()}`);
-});
-
-async function messageQueue() {
-  try {
-    const amqpServer = "amqp://localhost";
-    connection = await amqp.connect(amqpServer);
-    channel = await connection.createChannel();
-    await channel.assertQueue(QUEUE);
-  } catch (error) {
-    console.error(error.message);
-    throw new Error("An Error Occured");
-  }
-}
-
-messageQueue().then(async () => {
-  await channel.consume(QUEUE, data => {
-    const { recipients, text, sender } = JSON.parse(data.content);
-    insertIntoChat(recipients, text, sender);
-    channel.ack(data);
-  });
 });
 
 // Handles all errors
@@ -65,7 +62,8 @@ app.use((err, req, res, next) => {
 
 app.use((req, res) => res.status(500).send({ success: false }));
 
-app.listen(process.env.APP_PORT, () => {
+httpServer.listen(process.env.APP_PORT, () => {
+  queue.consume();
   console.log(`Listening on port: ${process.env.APP_PORT} 🌎`);
 });
 

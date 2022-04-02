@@ -18,15 +18,14 @@ const io  = require('socket.io')(httpServer,{
   }
 });
 
-io.use(wrap(checkToken));
+io.of('/api/v1').use(wrap(checkToken));
 
-io.on('connection', socket => {
-    const webSocket = new Websocket(io, socket);
+io.of('/api/v1').on('connection', socket => {
+    const webSocket = new Websocket(socket);
     webSocket.init();
 })
 // require("./routes/socketRoutes")(app, io);
-
-app.use('/api/v1', router);
+app.use(express.json());
 
 app.disable("etag");
 
@@ -35,13 +34,14 @@ app.use(helmet());
 app.use(morgan("combined"));
 
 app.use(cors());
-app.use(express.json());
 
 app.use(
   bodyParser.urlencoded({
     extended: false
   })
 );
+
+app.use('/api/v1', router);
 
 global.io = io;
 global.socketUsers = [];

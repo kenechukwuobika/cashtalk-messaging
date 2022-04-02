@@ -24,10 +24,17 @@ module.exports = {
                         allowNull: false
                     },
                     contactId: {
-                        type: Sequelize.UUID
+                        type: Sequelize.UUID,
+                        allowNull: false
                     },
-                    chatInstanceId: {
-                        type: Sequelize.UUID
+                    contactName: {
+                        type: Sequelize.STRING,
+                        allowNull: false
+                    },
+                    contactPhoneNumber: {
+                        type: Sequelize.STRING,
+                        allowNull: false,
+                        unique: true,
                     },
                     createdAt: {
                         allowNull: false,

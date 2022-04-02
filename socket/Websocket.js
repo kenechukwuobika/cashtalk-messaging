@@ -7,7 +7,8 @@ const {
 } = require('./handlers/chatHandlers');
 
 const {
-    sendTextMessage
+    sendTextMessage,
+    readMessage
 } = require('./handlers/messsageHandlers');
 
 const {
@@ -26,8 +27,7 @@ const {
 } = require('../constants/socketEvents');
 
 class Websocket{
-    constructor(io, socket){
-        this.io = io;
+    constructor(socket){
         this.socket = socket;
         this.token = socket ? socket.request.headers.authorization : null;
     }
@@ -53,6 +53,7 @@ class Websocket{
         this.socket.on(GROUPCHAT_REMOVEADMIN, removeAdminFromGroupChat(this.socket));
         
         this.socket.on(MESSAGE_SEND, sendTextMessage(this.socket));
+        this.socket.on(MESSAGE_READ, readMessage(this.socket));
     }
 }
 

@@ -10,28 +10,24 @@ class ApiFeatures{
 
     filter(){
         
-        // this.queryString.forEach(query => {
-        //     if(this.keywords.includes(query)){
-        //         delete this.req.query[query]
-        //     }
-        // });
+        this.queryString.forEach(query => {
+            if(this.keywords.includes(query)){
+                delete this.req.query[query]
+            }
+        });
 
-        // let queryStr = JSON.stringify(this.req.query);
-        // queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-        // this.query.find(JSON.parse(queryStr));
+        let queryStr = JSON.stringify(this.req.query);
+        queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+        this.query.find(JSON.parse(queryStr));
 
         return this;
     }
 
     paginate(){
-        console.log(this.queryObj)
         const { page } = this.queryObj
         const limit = 100;
-        const offset = (page - 1) * limit
-        this.query.findAll({
-            offset,
-            limit
-        });
+        const skip = (page - 1) * limit
+        this.query.skip(skip).limit(limit);
         return this;
     }
 

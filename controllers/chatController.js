@@ -7,6 +7,7 @@ const Message = require('../models').message;
 const DeletedMessage = require('../models').deletedMessage;
 const Contact = require('../models').contact;
 const errorController = require('../controllers/errorController');
+const NotFoundError = require('../error/NotFoundError');
 const sequelize = require('../config/database/connection');
 
 exports.openChat = async (req, res, next) => {
@@ -37,9 +38,10 @@ exports.getAllChat = async (req, res, next) => {
     await sequelize.transaction(async t => {
         try {
             const user = req.user;
-            const queryObj = {...this.req.query};
+            const { page } = req.query;
+            const limit = 10;
+            const offset = (page - 1) * limit || 0;
             const chatRooms = await ChatRoom.findAll({
-                limit: pageXOffset,
                 include: [
                     { 
                         model: ChatInstance,
@@ -65,6 +67,8 @@ exports.getAllChat = async (req, res, next) => {
                         ],
                     }
                 ],
+                limit,
+                offset,
             });
 
             res.status(200).json({
@@ -76,8 +80,8 @@ exports.getAllChat = async (req, res, next) => {
         } catch (error) {
             console.log(error)
             res.status(400).json({
-                status: 'fail',
-                data: error.message
+                status: error.status,
+                message: error.message
             })
         }
     });
@@ -110,10 +114,10 @@ exports.getChat = async (req, res, next) => {
                         where: { 
                             userId: user.id,
                             isDeleted: false
-                        },
-                        include: {
-                            model: Contact
                         }
+                    },
+                    {
+                        model: Participant
                     }
                 ],
             });

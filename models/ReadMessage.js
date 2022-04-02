@@ -1,7 +1,7 @@
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    class contact extends Model {
+    class ReadMessage extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
 
-    contact.init({
+    ReadMessage.init({
         id: {
             primaryKey: true,
             type: DataTypes.UUID,
@@ -20,26 +20,18 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         userId: {
+            allowNull: false,
             type: DataTypes.UUID,
-            allowNull: false
         },
-        contactId: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        contactName: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        contactPhoneNumber: {
-            type: DataTypes.STRING,
-            allowNull: false
+        messageId: {
+            allowNull: false,
+            type: DataTypes.UUID,
         }
     },
     {
         sequelize,
-        modelName: "contact"
+        modelName: "readMessage"
     });
     
-    return contact;
+    return ReadMessage;
 };

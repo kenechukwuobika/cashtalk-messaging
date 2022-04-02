@@ -6,13 +6,15 @@ const DeletedMessage = require('../models').deletedMessage;
 exports.getAllMessages = async (req, res, next) => {
     await sequelize.transaction(async t => {
         try {
+            const { chatRoomId } = req.query;
             const messages = await Message.findAll({
                 where: {
                     id: {
                         [Op.notIn]: sequelize.literal(`
                             (SELECT "messages"."id" FROM "messages" INNER JOIN "deletedMessages" ON "messages"."id" = "deletedMessages"."messageId" INNER JOIN "users" ON "users"."id" = "deletedMessages"."userId" WHERE "messages"."id" = "deletedMessages"."messageId" AND "deletedMessages"."userId" = "users"."id")
                         `)
-                    }
+                    },
+                    chatRoomId
                 }
             });
 

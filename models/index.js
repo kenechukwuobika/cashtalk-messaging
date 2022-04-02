@@ -55,9 +55,6 @@ db.message.belongsTo(db.chatRoom)
 db.message.hasMany(db.deletedMessage)
 db.deletedMessage.belongsTo(db.message)
 
-db.chatInstance.hasOne(db.contact)
-db.contact.belongsTo(db.chatInstance)
-
 // Refresh Databases
 // db.message.sync({ alter: true });
 module.exports = db;

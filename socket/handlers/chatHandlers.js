@@ -21,14 +21,17 @@ exports.initiateChat = socket => async (data) => {
         try {
             const { message, recipientId } = data;
             let chatRoom;
-            let participants = [];
-
             const currentUser = socket.request.user;
 
-            const chatInstance = await ChatInstance.findOne({userId: recipientId, isGroupChat: false });
-            if(chatInstance) console.log('chat between users');
+            const chatInstance = await ChatInstance.findOne({
+                where: {
+                    userId: currentUser.id,
+                    chatRoomType: 'normal'
+                }
+            });
            
             if(chatInstance){
+                console.log('chat between users');
                 chatRoom = await ChatRoom.findByPk(chatInstance.chatRoomId)
             }
             else{
@@ -41,29 +44,23 @@ exports.initiateChat = socket => async (data) => {
                 }
     
                 userIds.forEach(async (userId) => {
-                    const participant = await Participant.create({
+
+                    await Participant.create({
                         chatRoomId: chatRoom.id,
                         userId,
                         userPhoneNumber: 'contactId'
                     })
-                    participants.push(participant)
-                });
 
-                userIds.forEach(async (userId) => {
-                    const chatInstance = await ChatInstance.create({
+                    await ChatInstance.create({
                         chatRoomId: chatRoom.id,
                         userId,
                     })
     
-                    const data = {...chatRoom.dataValues, participants, chatInstance, message: newMessage }
-    
-                    if(newMessage){
-                        console.log('new Keiks g')
-                        socket.emit(CHAT_INITIATE, data)
-                        socket.to(userId).emit(CHAT_INITIATE, data)
-                    }
+                    socket.to(userId).emit(CHAT_INITIATE, chatRoom.id)
                 });
             }
+
+            io.of('/api/v1').in(currentUser.id).emit(CHAT_INITIATE, chatRoom.id)
 
         } catch (error) {
             console.log(error);

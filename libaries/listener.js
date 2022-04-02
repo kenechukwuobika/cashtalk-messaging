@@ -9,11 +9,6 @@ module.exports = async (message) => {
             case `${types.USER_CREATED}`:
                 userHandler.createUserHandler(message.payload)
                 break;
-            
-            case `${types.USER_CREATED}`:
-                userHandler.createUserHandler(message.payload)
-                break;
-        
             default:
                 break;
         }

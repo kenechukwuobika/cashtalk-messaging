@@ -1,5 +1,5 @@
-const Sequelize = require("sequelize");
 const fs = require("fs");
+const Sequelize = require("sequelize");
 const config = require("./environment");
 
 const sequelize = new Sequelize(
@@ -8,11 +8,11 @@ const sequelize = new Sequelize(
   config.password,
   {
     host: config.host,
-    dialect: "postgres",
-    raw: true,
+    dialect: config.dialect,
     port: config.port,
-    seederStorage: process.env.SEEDER_STORAGE,
-    dialectOptions: {},
+    seederStorage: config.seederStorage,
+    dialectOptions: config.dialectOptions,
+    raw: true,
     pool: {
       max: 5,
       min: 0,

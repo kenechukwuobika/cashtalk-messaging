@@ -7,8 +7,8 @@ module.exports = {
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
     */
-    const messageData = JSON.parse(fs.readFileSync(`${__dirname}/data/messageData.json`, 'utf-8'));
-    return queryInterface.bulkInsert('messages', messageData, {});
+    const profileData = JSON.parse(fs.readFileSync(`${__dirname}/data/profileData.json`, 'utf-8'));
+    return queryInterface.bulkInsert('profiles', profileData, {});
   },
 
   down: (queryInterface, Sequelize) => {
@@ -17,6 +17,6 @@ module.exports = {
       Return a promise to correctly handle asynchronicity.
     */
 
-      return queryInterface.bulkDelete('messages', null, {});
+      return queryInterface.bulkDelete('profiles', null, {});
   }
 };

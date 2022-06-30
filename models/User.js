@@ -29,19 +29,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'user',
             allowNull: false
         },
-        isVerified: {
-            type: DataTypes.STRING,
-            defaultValue: false
-        },
-        otpCode: {
-            type: DataTypes.STRING
-        },
-        otpExpireDate: {
-            type: DataTypes.DATE
-        },
-        blockedNumbers: {
-            type: DataTypes.ARRAY(DataTypes.STRING)
-        }
+        transactionPin: DataTypes.STRING,
     },
     {
         sequelize,

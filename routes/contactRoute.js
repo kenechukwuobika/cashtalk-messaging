@@ -1,6 +1,6 @@
 const express = require('express');
 const contactController = require('../controllers/contactController');
-const protectRoute = require('../middlewares/protectRoute');
+const { protectRoute } = require("cashtalk-common");
 
 const router = express.Router();
 
@@ -15,6 +15,5 @@ router
 .delete(contactController.deleteContact);
 
 router.post('/sync', contactController.syncContact);
-// router.post('/:contactId/star', contactController.muteContact)
 
 module.exports = router;

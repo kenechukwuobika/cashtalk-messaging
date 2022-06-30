@@ -21,9 +21,30 @@ module.exports = {
                 parentMesageId: {
                     type: Sequelize.UUID
                 },
+                recipientId: {
+                    type: Sequelize.UUID
+                },
+                gameId: {
+                    type: Sequelize.UUID
+                },
+                paymentId: {
+                    type: Sequelize.UUID
+                },
+                contactName: {
+                    type: Sequelize.STRING
+                },
+                contactPhoneNumber: {
+                    type: Sequelize.STRING
+                },
+                location_lat: {
+                    type: Sequelize.STRING
+                },
+                location_long: {
+                    type: Sequelize.STRING
+                },
                 type: {
                     type: Sequelize.ENUM,
-                    values: ['text', 'photo', 'audio', 'video'],
+                    values: ['text', 'photo', 'audio', 'video', 'sticker', 'contact', 'location', 'alert'],
                     defaultValue: 'text'
                 },
                 status: {
@@ -39,8 +60,13 @@ module.exports = {
                     allowNull: true,
                     type: Sequelize.STRING
                 },
-                deletedBy: {
-                    type: Sequelize.ARRAY(Sequelize.STRING)
+                readReceipts: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: true
+                },
+                deletedForEveryone: {
+                    type: Sequelize.BOOLEAN,
+                    defaultValue: false
                 },
                 createdAt: {
                     allowNull: false,
@@ -57,5 +83,7 @@ module.exports = {
     },
     down: async (queryInterface, Sequelize) => {
         await queryInterface.dropTable("messages");
+        await queryInterface.sequelize.query('drop type enum_messages_type;');
+        await queryInterface.sequelize.query('drop type enum_messages_status');
     }
 };

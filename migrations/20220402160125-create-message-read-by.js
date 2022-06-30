@@ -12,40 +12,20 @@ module.exports = {
         return queryInterface.sequelize
             .query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";')
             .then(() => {
-                return queryInterface.createTable("chatInstances", {
+                return queryInterface.createTable("messageReadBy", {
                     id: {
                         allowNull: false,
                         defaultValue: Sequelize.literal("uuid_generate_v4()"),
                         primaryKey: true,
                         type: Sequelize.UUID
                     },
-                    chatRoomId: {
-                        type: Sequelize.UUID,
-                        allowNull: false
-                    },
-                    chatRoomType: {
-                        type: Sequelize.DataTypes.ENUM('normal', 'group'),
-                        defaultValue: 'normal',
-                        allowNull: false
-                    },
                     userId: {
                         type: Sequelize.UUID,
                         allowNull: false
                     },
-                    chatUserId: {
-                        type: Sequelize.UUID
-                    },
-                    unreadMessages: {
-                        type: Sequelize.INTEGER,
-                        defaultValue: 0
-                    },
-                    isArchived: {
-                        type: Sequelize.BOOLEAN,
-                        defaultValue: false
-                    },
-                    isDeleted: {
-                        type: Sequelize.BOOLEAN,
-                        defaultValue: false
+                    messageId: {
+                        type: Sequelize.UUID,
+                        allowNull: false
                     },
                     createdAt: {
                         allowNull: false,
@@ -68,6 +48,6 @@ module.exports = {
         return queryInterface.dropTable('users');
         */
 
-        await queryInterface.dropTable("chatInstances");
+        await queryInterface.dropTable("messageReadBy");
     }
 };

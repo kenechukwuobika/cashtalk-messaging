@@ -1,7 +1,7 @@
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    class VideoMessage extends Model {
+    class MessageReadBy extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -12,26 +12,28 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
 
-    VideoMessage.init({
+    MessageReadBy.init({
         id: {
             primaryKey: true,
             type: DataTypes.UUID,
             defaultValue: DataTypes.literal("uuid_generate_v4()"),
             allowNull: false
         },
-        messageId: {
+        userId: {
             allowNull: false,
             type: DataTypes.UUID,
         },
-        fileAccessKey: {
-            allowNull: true,
-            type: DataTypes.STRING
+        messageId: {
+            allowNull: false,
+            type: DataTypes.UUID,
         }
     },
     {
         sequelize,
-        modelName: "VideoMessage"
+        modelName: "messageReadBy",
+        freezeTableName: true,
+        timestamps: true
     });
     
-    return VideoMessage;
+    return MessageReadBy;
 };

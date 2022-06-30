@@ -30,5 +30,4 @@ const environmentVariables = {
     seederStorage: process.env.DB_SEEDER_STORAGE
   }
 };
-console.log(environmentVariables[process.env.NODE_ENV])
 module.exports = environmentVariables[process.env.NODE_ENV];

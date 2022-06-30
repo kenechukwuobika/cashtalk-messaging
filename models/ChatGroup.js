@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         participantNumber: {
-        type: DataTypes.INTEGER
+            type: DataTypes.INTEGER
         },
     },
     {

@@ -5,7 +5,8 @@ const ChatInstance = require('../models').chatInstance;
 const Participant = require('../models').participant;
 const Message = require('../models').message;
 const DeletedMessage = require('../models').deletedMessage;
-const Contact = require('../models').contact;
+const MessageReadBy = require('../models').messageReadBy;
+const Profile = require('../models').profile;
 const errorController = require('../controllers/errorController');
 const NotFoundError = require('../error/NotFoundError');
 const sequelize = require('../config/database/connection');
@@ -39,18 +40,21 @@ exports.getAllChat = async (req, res, next) => {
         try {
             const user = req.user;
             const { page } = req.query;
-            const limit = 10;
+            const limit = 1;
             const offset = (page - 1) * limit || 0;
-            const chatRooms = await ChatRoom.findAll({
+            const chats = await ChatRoom.findAll({
                 include: [
-                    { 
+                    {
                         model: ChatInstance,
                         where: { 
-                            userId: user.id,
-                            isDeleted: false
+                            userId: user.id
+                        },
+                        include: {
+                            model: User,
+                            as: 'chatUser'
                         }
                     },
-                    { 
+                    {
                         model: Participant
                     },
                     { 
@@ -65,16 +69,23 @@ exports.getAllChat = async (req, res, next) => {
                         order: [ 
                             ['createdAt', 'DESC'] 
                         ],
+                        limit,
+                        offset,
+                        include: {
+                            model: MessageReadBy
+                            // attributes: [
+                            //     'id', 'userId', 'messageId',
+                            //     [sequelize.fn('COUNT', sequelize.col('MessageReadBy.userId')), 'm_userId']
+                            // ],
+                        }
                     }
-                ],
-                limit,
-                offset,
+                ]
             });
 
             res.status(200).json({
                 status: 'success',
-                result: chatRooms.length,
-                data: chatRooms
+                result: chats.length,
+                chats
             })
 
         } catch (error) {
@@ -87,13 +98,13 @@ exports.getAllChat = async (req, res, next) => {
     });
 }
 
-exports.getChat = async (req, res, next) => {
+exports.getChatById = async (req, res, next) => {
     await sequelize.transaction(async t => {
         try {
             const { user } = req;
             const { chatRoomId } = req.params;
 
-            const chatRoom = await ChatRoom.findOne({
+            const chat = await ChatRoom.findOne({
                 where: {
                     id: {
                         [Op.and]: [
@@ -118,13 +129,16 @@ exports.getChat = async (req, res, next) => {
                     },
                     {
                         model: Participant
+                    },
+                    {
+                        model: Message
                     }
                 ],
             });
 
             res.status(200).json({
                 status: 'success',
-                data: chatRoom
+                chat
             })
             
         } catch (error) {
@@ -138,35 +152,52 @@ exports.getChat = async (req, res, next) => {
 
 }
 
-exports.muteChat = async (req, res, next) => {
+exports.getChatByUsers = async (req, res, next) => {
     await sequelize.transaction(async t => {
         try {
-            const { chatRoomId } = req.params;
-            const { isMuted } = req.body;
-            const chatData = { isMuted };
-            const chatInstance = await ChatInstance.update(chatData, {
-                where: {
-                    chatRoomId,
-                    userId: req.user.id
-                },
-                returning: true
-            });
+            const { chatUserId } = req.query;
+            const user = await User.findByPk(req.user.id);
+            
+            const chat = await ChatRoom.findOne({
+                include: [
+                    {
+                        model: ChatInstance,
+                        where: {
+                            userId: user.id,
+                            chatUserId
+                        }
+                    },
+                    { 
+                        model: Message,
+                        where: {
+                            id: {
+                                [Op.notIn]: sequelize.literal(`
+                                    (SELECT "messages"."id" FROM "messages" INNER JOIN "deletedMessages" ON "messages"."id" = "deletedMessages"."messageId" INNER JOIN "users" ON "users"."id" = "deletedMessages"."userId" WHERE "messages"."id" = "deletedMessages"."messageId" AND "deletedMessages"."userId" = '${user.id}' ORDER BY "messages"."createdAt")
+                                `)
+                            }
+                        },
+                        order: [ 
+                            ['createdAt', 'DESC'] 
+                        ],
+                        limit: 1
+                    }
+                ]
+            })
 
-            const updatedChatInstance = chatInstance[1][0];
             res.status(200).json({
                 status: 'success',
-                data: updatedChatInstance
-            });
-
-
+                data: chat
+            })
+            
         } catch (error) {
             console.log(error)
             res.status(400).json({
                 status: 'fail',
                 data: error.message
-            });
+            })
         }
     });
+
 }
 
 exports.archiveChat = async (req, res, next) => {

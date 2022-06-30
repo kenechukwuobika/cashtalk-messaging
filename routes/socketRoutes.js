@@ -7,12 +7,12 @@ module.exports = (app, io) => {
   const socketchatController = require("../controllers/socketchatController");
   const socketEvents = require('../constants/socketEvents');
   const wrap = require('../utilities/middlewareWrapper');
-  const checkToken = require('../common/middleware/checkToken');
+  const { protectRoute } = require("cashtalk-common");
 
   router.use('/chats', chatRoute);
   router.use('/messages', messageRoute);
 
-  io.use(wrap(checkToken));
+  io.use(wrap(protectRoute));
 
   io.on('connection', socket => {
     const id = socket.request.user.id;

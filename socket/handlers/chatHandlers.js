@@ -5,7 +5,6 @@ const ChatInstance = require('../../models').chatInstance;
 const Participant = require('../../models').participant;
 const Message = require('../../models').message;
 const {
-    CHAT_OPEN,
     CHAT_INITIATE,
     GROUPCHAT_CREATE,
     GROUPCHAT_UPDATENAME,
@@ -16,123 +15,88 @@ const {
     GROUPCHAT_KICKOUT
 } = require('../../constants/socketEvents');
 
-exports.initiateChat = socket => async (data) => {
+exports.createGroup = socket => async (data) => {
     await sequelize.transaction(async t => {
         try {
-            const { message, recipientId } = data;
-            let chatRoom;
+            const participants = [];
+            const chatInstances = [];
             const currentUser = socket.request.user;
-
-            const chatInstance = await ChatInstance.findOne({
-                where: {
-                    userId: currentUser.id,
-                    chatRoomType: 'normal'
-                }
-            });
-           
-            if(chatInstance){
-                console.log('chat between users');
-                chatRoom = await ChatRoom.findByPk(chatInstance.chatRoomId)
-            }
-            else{
-                chatRoom = await ChatRoom.create();
-                const messageData = Object.assign(message, { chatRoomId: chatRoom.id, senderId: currentUser.id })
-                const newMessage = await Message.create(messageData);
-                const userIds = [currentUser.id, recipientId];
-                if(!userIds || userIds.length !== 2){
-                    return;
-                }
-    
-                userIds.forEach(async (userId) => {
-
-                    await Participant.create({
-                        chatRoomId: chatRoom.id,
-                        userId,
-                        userPhoneNumber: 'contactId'
-                    })
-
-                    await ChatInstance.create({
-                        chatRoomId: chatRoom.id,
-                        userId,
-                    })
-    
-                    socket.to(userId).emit(CHAT_INITIATE, chatRoom.id)
-                });
-            }
-
-            io.of('/api/v1').in(currentUser.id).emit(CHAT_INITIATE, chatRoom.id)
-
-        } catch (error) {
-            console.log(error);
-        }
-    })
-}
-
-exports.createGroupChat = socket => async (data) => {
-    await sequelize.transaction(async t => {
-        try {
-            const currentUser = socket.request.user;
-            const { participants, name } = data;
+            const { users, name } = data;
             if(!name){
-                // 1330 - 1479
+                console.log("Please provide a name");
                 return;
             }
-            const chatRoom = await ChatRoom.create({
-                name,
-                isGroupChat: true
-            })
 
-            participants.forEach(async (user) => {
+            users.forEach(async (user) => {
                 let isOwner = false;
                 let isAdmin = false;
                 
-                if(socket.request.user.id === user.id){
+                if(currentUser.id === user){
                     isOwner = true;
                     isAdmin = true;
-                    return;
                 }
 
-                const participant = await Participant.create({
-                    userId: user.id,
-                    chatRoomId: chatRoom.id,
+                const participant = {
+                    userId: user,
                     userPhoneNumber: user.phoneNumber,
                     isOwner,
                     isAdmin
-                })
+                };
 
-                const chatInstance = await ChatInstance.create({ 
-                    userId: user.id,
-                    chatRoomId: chatRoom.id
-                })
+                participants.push(participant);
 
-                if(chatInstance && participant){
-                    const socketData = socketUsers.find(socketUser => socketUser.userId === user.id);
-                    console.log(socketUsers)
-                    console.log(socketData)
-                    if(socketData){
-                        const socket = io.sockets.sockets.get(socketData.socketId);
-                        const data = {
-                            ...chatRoom.dataValues,
-                            chatInstance,
-                            participant
-                        }
-                        socket.emit(GROUPCHAT_CREATE, data)
-                    }
-                }
+                const chatInstance = {
+                    userId: user
+                };
+
+                chatInstances.push(chatInstance)
             });
 
-            socket.emit(GROUPCHAT_CREATE, chatRoom)
+            // console.log(participants)
+            // console.log(chatInstances)
+            // return
+
+            const chatRoom = await ChatRoom.create({
+                name,
+                isGroupChat: true,
+                chatInstance: [chatInstances],
+                participant: [participants]
+            }, {
+                include: [
+                    Participant,
+                    ChatInstance
+                ]
+            });
+            
+            // socket.emit(GROUPCHAT_CREATE, chatRoom)
+
+            users.forEach(async (user) => {
+                io.of('/api/v1').in(user).emit(GROUPCHAT_CREATE, chatRoom)
+            })
         } catch (error) {
             console.log(error)
         }
     });
 }
 
-exports.changeGroupChatName = socket => async (data) => {
+exports.changeGroupName = socket => async (data) => {
     await sequelize.transaction(async t => {
         try {
             const currentUser = socket.request.user;
             const { chatRoomId, name } = data;
+            const participant = await Participant.findOne({
+                chatRoomId,
+                userId: currentUser.id
+            });
+
+            if(!participant){
+                return console.log("This user is not a member of this group");
+            }
+
+            if(!participant.admin){
+                return console.log("Unauthorized! This user is not an admin of this group");
+            }
+
             const chatRoom = await ChatRoom.update({
                 name              
             },
@@ -142,21 +106,56 @@ exports.changeGroupChatName = socket => async (data) => {
                 }
             });
             
-            socket.emit(GROUPCHAT_ADDADMIN, chatRoom);
+            chatRoom.participants.forEach(participant => {
+                socket.in(participant.userId).emit(GROUPCHAT_ADDADMIN, chatRoom);
+            });
 
         } catch (error) {           
             console.log(error);
-
-            res.status(400).json({
-                status: 'fail',
-                data: error.message
-            });
         }
     });
 
 }
 
-exports.addAdminToGroupChat = socket => async (data) => {
+exports.changeGroupDesc = socket => async (data) => {
+    await sequelize.transaction(async t => {
+        try {
+            const currentUser = socket.request.user;
+            const { chatRoomId, desc } = data;
+            const participant = await Participant.findOne({
+                chatRoomId,
+                userId: currentUser.id
+            });
+
+            if(!participant){
+                return console.log("This user is not a member of this group");
+            }
+
+            if(!participant.admin){
+                return console.log("Unauthorized! This user is not an admin of this group");
+            }
+
+            const chatRoom = await ChatRoom.update({
+                desc              
+            },
+            {
+                where: {
+                    id: chatRoomId
+                }
+            });
+            
+            chatRoom.participants.forEach(participant => {
+                socket.in(participant.userId).emit(GROUPCHAT_UPDATEDESC, chatRoom);
+            });
+
+        } catch (error) {           
+            console.log(error);
+        }
+    });
+
+}
+
+exports.addAdminToGroup = socket => async (data) => {
     await sequelize.transaction(async t => {
         try {
             const currentUser = socket.request.user;
@@ -170,8 +169,8 @@ exports.addAdminToGroupChat = socket => async (data) => {
                 }
             });
 
-            if(!currentParticipant.isOwner){
-                return
+            if(!currentParticipant.isAdmin){
+                return console.log('Unauthorized!')
             }            
             const otherParticipant = await Participant.update({ isAdmin: true }, { 
                 where: {
@@ -185,20 +184,18 @@ exports.addAdminToGroupChat = socket => async (data) => {
             }
             
             console.log(currentParticipant)
-            socket.emit(GROUPCHAT_ADDADMIN, otherParticipant);
+            socket.emit(GROUPCHAT_UPDATENAME, otherParticipant);
         } catch (error) {
             console.log(error)
         }
     });
 }
 
-exports.removeAdminFromGroupChat = socket => async (data) => {
+exports.removeAdminFromGroup = socket => async (data) => {
     await sequelize.transaction(async t => {
         try {
             const currentUser = socket.request.user;
             const { otherUserId, chatRoomId } = data;
-            console.log(currentUser.id)
-            console.log(otherUserId)
             const currentParticipant = await Participant.findOne({
                 where: {
                     userId: currentUser.id,
@@ -207,7 +204,7 @@ exports.removeAdminFromGroupChat = socket => async (data) => {
             });
 
             if(!currentParticipant.isOwner){
-                return
+                return console.log("unauthorized")
             }            
             const otherParticipant = await Participant.update({ isAdmin: false }, { 
                 where: {
@@ -221,14 +218,14 @@ exports.removeAdminFromGroupChat = socket => async (data) => {
             }
             
             console.log(currentParticipant)
-            socket.emit(GROUPCHAT_ADDADMIN, otherParticipant);
+            socket.emit(GROUPCHAT_REMOVEADMIN, otherParticipant);
         } catch (error) {
             console.log(error)
         }
     });
 }
 
-exports.leaveGroupChat = socket => async (data) => {
+exports.leaveGroup = socket => async (data) => {
     await sequelize.transaction(async t => {
         try {
             const currentUser = socket.request.user;
@@ -240,7 +237,26 @@ exports.leaveGroupChat = socket => async (data) => {
                 }
             });
             
-            socket.emit(GROUPCHAT_ADDADMIN, participant);
+            socket.emit(GROUPCHAT_LEAVE, participant);
+        } catch (error) {
+            console.log(error)
+        }
+    });
+}
+
+exports.kickFromGroup = socket => async (data) => {
+    await sequelize.transaction(async t => {
+        try {
+            const currentUser = socket.request.user;
+            const { chatRoomId } = data;
+            const participant = await Participant.delete({
+                where: {
+                    userId: currentUser.id,
+                    chatRoomId
+                }
+            });
+            
+            socket.emit(GROUPCHAT_KICKOUT, participant);
         } catch (error) {
             console.log(error)
         }

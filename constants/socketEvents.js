@@ -1,13 +1,4 @@
 module.exports = {
-    CHAT_OPEN: 'chat:open',
-    CHAT_INITIATE: 'chat:initiate',
-    CHAT_GETALL: 'chat:getAll',
-    CHAT_GETONE: 'chat:getOne',
-    CHAT_MUTE: 'chat:mute',
-    CHAT_ARCHIVE: 'chat:archive',
-    CHAT_UPDATE: 'chat:update',
-    CHAT_DELETE: 'chat:delete',
-
     GROUPCHAT_CREATE: 'groupchat:create',
     GROUPCHAT_UPDATENAME: 'groupchat:updateName',
     GROUPCHAT_UPDATEDESC: 'groupchat:updateDesc',
@@ -16,8 +7,15 @@ module.exports = {
     GROUPCHAT_LEAVE: 'groupchat:leave',
     GROUPCHAT_KICKOUT: 'groupchat:kickout',
     
-    MESSAGE_GETALL: 'message:getAll',
     MESSAGE_SEND: 'message:send',
-    MESSAGE_DELETE: 'message:delete',
     MESSAGE_READ: 'message:read',
+    MESSAGE_DELETE_EVERYONE: 'message:delete:everyone',
+    TYPING_START: 'typing:start',
+    TYPING_STOP: 'typing:stop',
+
+    STATUS_ONLINE: 'status:online',
+    STATUS_OFFLINE: 'status:offline',
+    STATUS_AWAY: 'status:away',
+
+    APP_ERROR: 'app_error'
 }

@@ -31,6 +31,37 @@ module.exports = (sequelize, DataTypes) => {
         parentMesageId: {
             type: DataTypes.UUID
         },
+        recipientId: {
+            type: DataTypes.UUID
+        },
+        gameId: {
+            type: DataTypes.UUID
+        },
+        paymentId: {
+            type: DataTypes.UUID
+        },
+        contactName: {
+            type: DataTypes.STRING
+        },
+        contactPhoneNumber: {
+            type: DataTypes.STRING
+        },
+        location_lat: {
+            type: DataTypes.STRING
+        },
+        location_long: {
+            type: DataTypes.STRING
+        },
+        type: {
+            type: DataTypes.ENUM,
+            values: ['text', 'photo', 'audio', 'video', 'sticker', 'contact', 'location', 'alert'],
+            defaultValue: 'text'
+        },
+        status: {
+            type: DataTypes.ENUM,
+            values: ['unread', 'read'],
+            defaultValue: 'unread'
+        },
         text: {
             allowNull: true,
             type: DataTypes.STRING
@@ -39,18 +70,13 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
             type: DataTypes.STRING
         },
-        type: {
-            type: DataTypes.ENUM,
-            values: ['text', 'photo', 'audio', 'video', 'sticker', 'contact', 'location'],
-            defaultValue: 'text'
+        readReceipts: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
         },
-        status: {
-            type: DataTypes.ENUM,
-            values: ['unread', 'read'],
-            defaultValue: 'unread'
-        },
-        deletedBy: {
-            type: DataTypes.ARRAY(DataTypes.STRING)
+        deletedForEveryone: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
         }
     },
     {

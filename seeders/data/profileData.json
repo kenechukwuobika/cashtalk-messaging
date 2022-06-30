@@ -1,0 +1,202 @@
+[
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+        "firstName": "Jonas",
+        "lastName": "Schmedtmann",
+        "userName": "jonas_schmedtmann",
+        "email": "admin@natours.io",
+        "imageKey": "user-1.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c02",
+        "firstName": "Lourdes",
+        "lastName": "Browning",
+        "userName": "lourdes_browning",
+        "email": "loulou@example.com",
+        "imageKey": "user-2.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c21",
+        "firstName": "Sophie",
+        "lastName": "Hart",
+        "userName": "sophie_hart",
+        "email": "sophie@example.com",
+        "imageKey": "user-3.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c04",
+        "firstName": "Ayla",
+        "lastName": "Cornell",
+        "userName": "ayla_cornell",
+        "email": "ayls@example.com",
+        "imageKey": "user-4.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c05",
+        "firstName": "Leo",
+        "lastName": "Gillespie",
+        "userName": "leo_gillespie",
+        "email": "leo@example.com",
+        "imageKey": "user-5.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c06",
+        "firstName": "Jennifer",
+        "lastName": "Hardy",
+        "userName": "jennifer_hardy",
+        "email": "jennifer@example.com",
+        "imageKey": "user-6.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c07",
+        "firstName": "Kate",
+        "lastName": "Morrison",
+        "userName": "kate_morrison",
+        "email": "kate@example.com",
+        "imageKey": "user-7.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c08",
+        "firstName": "Eliana",
+        "lastName": "Stout",
+        "userName": "eliana_stout",
+        "email": "eliana@example.com",
+        "imageKey": "user-8.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c09",
+        "firstName": "Cristian",
+        "lastName": "Vega",
+        "userName": "cristian_vega",
+        "email": "chris@example.com",
+        "imageKey": "user-9.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c10",
+        "firstName": "Steve",
+        "lastName": "Scaife",
+        "userName": "steve_scaife",
+        "email": "steve@example.com",
+        "imageKey": "user-10.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c11",
+        "firstName": "Aarav",
+        "lastName": "Lynn",
+        "userName": "aarav_lynn",
+        "email": "aarav@example.com",
+        "imageKey": "user-11.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c12",
+        "firstName": "Miyah",
+        "lastName": "Myles",
+        "userName": "miyah_myles",
+        "email": "miyah@example.com",
+        "imageKey": "user-12.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c13",
+        "firstName": "Ben",
+        "lastName": "Hadley",
+        "userName": "ben_hadley",
+        "email": "ben@example.com",
+        "imageKey": "user-13.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c14",
+        "firstName": "Laura",
+        "lastName": "Wilson",
+        "userName": "laura_wilson",
+        "email": "laura@example.com",
+        "imageKey": "user-14.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c15",
+        "firstName": "Max",
+        "lastName": "Smith",
+        "userName": "max_smith",
+        "email": "max@example.com",
+        "imageKey": "user-15.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c16",
+        "firstName": "Isabel",
+        "lastName": "Kirkland",
+        "userName": "isabel_kirkland",
+        "email": "isabel@example.com",
+        "imageKey": "user-16.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c17",
+        "firstName": "Alexander",
+        "lastName": "Jones",
+        "userName": "alexander_jones",
+        "email": "alex@example.com",
+        "imageKey": "user-17.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c18",
+        "firstName": "Eduardo",
+        "lastName": "Hernandez",
+        "userName": "eduardo_hernandez",
+        "email": "edu@example.com",
+        "imageKey": "user-18.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c19",
+        "firstName": "John",
+        "lastName": "Riley",
+        "userName": "john_riley",
+        "email": "john@example.com",
+        "imageKey": "user-19.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "userId": "9bb5af68-354c-49c1-bdec-c35fb4c52c20",
+        "firstName": "Lisa",
+        "lastName": "Brown",
+        "userName": "lisa_brown",
+        "email": "lisa@example.com",
+        "imageKey": "user-20.jpg",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    }
+]

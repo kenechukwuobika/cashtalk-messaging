@@ -1,0 +1,60 @@
+[
+    {
+        "senderId": "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+        "chatRoomId": "7fb3e32b-ee95-483c-a0b8-1ec879850fc3",
+        "recipientId": "9bb5af68-354c-49c1-bdec-c35fb4c52c02",
+        "text": "Hi, this is the first message created on Cashtalk",
+        "createdAt": "2022-04-29 18:58:31.812+00",
+        "updatedAt": "2022-04-29 18:58:31.812+00"
+    },
+    {
+        "senderId": "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+        "chatRoomId": "7fb3e32b-ee95-483c-a0b8-1ec879850fc3",
+        "recipientId": "9bb5af68-354c-49c1-bdec-c35fb4c52c02",
+        "text": "Are you excited?",
+        "createdAt": "2022-04-29 18:58:31.812+00",
+        "updatedAt": "2022-04-29 18:58:31.812+00"
+    },
+    {
+        "senderId": "9bb5af68-354c-49c1-bdec-c35fb4c52c02",
+        "chatRoomId": "7fb3e32b-ee95-483c-a0b8-1ec879850fc3",
+        "recipientId": "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+        "text": "Oh wow... of course I am. who wouldn't?",
+        "createdAt": "2022-04-29 19:01:20.812+00",
+        "updatedAt": "2022-04-29 19:01:20.812+00"
+    },
+    {
+        "senderId": "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+        "chatRoomId": "7fb3e32b-ee95-483c-a0b8-1ec879850fc3",
+        "recipientId": "9bb5af68-354c-49c1-bdec-c35fb4c52c02",
+        "text": "Big things ahead",
+        "createdAt": "2022-04-29 20:22:09.812+00",
+        "updatedAt": "2022-04-29 20:22:09.812+00"
+    },
+
+
+    {
+        "senderId": "9bb5af68-354c-49c1-bdec-c35fb4c52c03",
+        "chatRoomId": "c650e22b-c624-4bf9-ba13-5df4bf94005e",
+        "recipientId": "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+        "text": "Heyy, what's up",
+        "createdAt": "2022-04-29 18:58:31.812+00",
+        "updatedAt": "2022-04-29 18:58:31.812+00"
+    },
+    {
+        "senderId": "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+        "chatRoomId": "c650e22b-c624-4bf9-ba13-5df4bf94005e",
+        "recipientId": "9bb5af68-354c-49c1-bdec-c35fb4c52c03",
+        "text": "I'm fine, thanks... you?",
+        "createdAt": "2022-04-29 18:58:31.812+00",
+        "updatedAt": "2022-04-29 18:58:31.812+00"
+    },
+    {
+        "senderId": "9bb5af68-354c-49c1-bdec-c35fb4c52c03",
+        "chatRoomId": "c650e22b-c624-4bf9-ba13-5df4bf94005e",
+        "recipientId": "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+        "text": "I'm good... so how was the project?",
+        "createdAt": "2022-04-29 19:01:20.812+00",
+        "updatedAt": "2022-04-29 19:01:20.812+00"
+    }
+]

@@ -1,10 +1,11 @@
 const express = require('express');
 const chatController = require('../controllers/chatController');
-const protectRoute = require('../middlewares/protectRoute');
+const { protectRoute } = require("cashtalk-common");
 
 const router = express.Router();
 
 router.use(protectRoute);
+router.get('/user', chatController.getChatByUsers)
 
 router
 .route('/')
@@ -12,10 +13,10 @@ router
 
 router
 .route('/:chatRoomId')
-.get(chatController.getChat)
+.get(chatController.getChatById)
 .delete(chatController.deleteChat)
 
-router.post('/:chatRoomId/mute', chatController.muteChat)
+// router.post('/:chatRoomId/mute', chatController.muteChat)
 router.post('/:chatRoomId/archive', chatController.archiveChat)
 
 module.exports = router;

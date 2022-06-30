@@ -21,19 +21,7 @@ module.exports = {
                 defaultValue: 'user',
                 allowNull: false
             },
-            isVerified: {
-                type: Sequelize.STRING,
-                defaultValue: false
-            },
-            otpCode: {
-                type: Sequelize.STRING
-            },
-            otpExpireDate: {
-                type: Sequelize.DATE
-            },
-            blockedNumbers: {
-                type: Sequelize.ARRAY(Sequelize.STRING)
-            },
+            transactionPin: Sequelize.STRING,
             createdAt: Sequelize.DATE,
             updatedAt: Sequelize.DATE,
         });

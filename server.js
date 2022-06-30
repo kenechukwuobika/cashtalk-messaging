@@ -6,9 +6,8 @@ const httpServer = require("http").createServer(app);
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
-const queue = require("./common/events/queue");
+const { queue, protectRoute } = require("cashtalk-common");
 const wrap = require('./utilities/middlewareWrapper');
-const checkToken = require('./common/middleware/checkToken');
 const Websocket = require("./socket/Websocket");
 const router = require("./routes");
 const io  = require('socket.io')(httpServer,{
@@ -18,12 +17,13 @@ const io  = require('socket.io')(httpServer,{
   }
 });
 
-io.of('/api/v1').use(wrap(checkToken));
+io.of('/api/v1').use(wrap(protectRoute));
 
 io.of('/api/v1').on('connection', socket => {
     const webSocket = new Websocket(socket);
     webSocket.init();
-})
+});
+
 // require("./routes/socketRoutes")(app, io);
 app.use(express.json());
 
@@ -62,9 +62,10 @@ app.use((err, req, res, next) => {
 
 app.use((req, res) => res.status(500).send({ success: false }));
 
-httpServer.listen(process.env.APP_PORT, () => {
-  queue.consume();
-  console.log(`Listening on port: ${process.env.APP_PORT} 🌎`);
+httpServer.listen(process.env.PORT, async () => {
+  await queue.initialize();
+  await queue.consume();
+  console.log(`Listening on port: ${process.env.PORT} 🌎`);
 });
 
 module.exports = app;

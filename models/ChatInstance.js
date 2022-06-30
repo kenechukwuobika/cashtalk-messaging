@@ -31,15 +31,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.UUID,
             allowNull: false
         },
+        chatUserId: {
+            type: DataTypes.UUID
+        },
         unreadMessages: {
             type: DataTypes.INTEGER,
             defaultValue: 0
         },
         isArchived: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        },
-        isMuted: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
         },

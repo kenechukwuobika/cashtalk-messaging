@@ -1,6 +1,6 @@
 const express = require('express');
 const messageController = require('../controllers/messageController');
-const protectRoute = require('../middlewares/protectRoute');
+const { protectRoute } = require("cashtalk-common");
 
 const router = express.Router();
 
@@ -12,6 +12,7 @@ router
 
 router
 .route('/:messageId')
+.get(messageController.getMessage)
 .delete(messageController.deleteMessage)
 
 // router.post('/:messageId/star', messageController.muteMessage)

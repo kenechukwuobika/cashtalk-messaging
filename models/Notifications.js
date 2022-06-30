@@ -31,6 +31,14 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        useCustomNotification: {
+            allowNull: false,
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
+        notificationTone: {
+            type: DataTypes.STRING,
         }
     },
     {

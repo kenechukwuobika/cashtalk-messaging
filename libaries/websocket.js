@@ -1,6 +1,6 @@
 const User = require("../models").user;
 const sequelize = require("../config/database/connection");
-const checkToken = require("../common/middleware/checkToken");
+const { protectRoute } = require("cashtalk-common");
 
 class Websocket{
     constructor(socket){
@@ -17,7 +17,7 @@ class Websocket{
             return null;
         }
         console.log('connected to socket');
-        const currentUser = checkToken(this.token, User);
+        const currentUser = protectRoute(this.token, User);
         if(!currentUser){
 
         }

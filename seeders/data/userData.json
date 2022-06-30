@@ -1,0 +1,163 @@
+[
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+        "role": "user",
+        "phoneNumber": "09081728618",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c02",
+        "role": "user",
+        "phoneNumber": "07018867821",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c21",
+        "role": "user",
+        "phoneNumber": "08041787587",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c04",
+        "role": "user",
+        "phoneNumber": "08087484175",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c05",
+        "role": "user",
+        "phoneNumber": "07066168428",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c06",
+        "role": "user",
+        "phoneNumber": "08128817614",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c07",
+        "role": "user",
+        "phoneNumber": "08126314845",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c08",
+        "role": "user",
+        "phoneNumber": "08086188172",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c09",
+        "role": "user",
+        "phoneNumber": "09033221102",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c10",
+        "role": "user",
+        "phoneNumber": "08087261818",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c11",
+        "role": "user",
+        "phoneNumber": "09087281644",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c12",
+        "role": "user",
+        "phoneNumber": "07072818681",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c13",
+        "role": "user",
+        "phoneNumber": "09083453211",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c14",
+        "role": "user",
+        "phoneNumber": "09081247219",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c15",
+        "role": "user",
+        "phoneNumber": "08186182817",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c16",
+        "role": "user",
+        "phoneNumber": "08147218186",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c17",
+        "role": "user",
+        "phoneNumber": "07098186172",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c18",
+        "role": "user",
+        "phoneNumber": "09128817816",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c19",
+        "role": "user",
+        "phoneNumber": "08028618178",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    },
+    {
+        "id": "9bb5af68-354c-49c1-bdec-c35fb4c52c20",
+        "role": "user",
+        "phoneNumber": "08076812810",
+        "transactionPin": "$2a$12$/fk4TwYD00xTfTS3ofkgIegVZFmx2NCZKnv02P5qO37YOEA5YhgcS",
+        "createdAt": "2022-04-27 18:58:31.812+00",
+        "updatedAt": "2022-04-27 18:58:31.812+00"
+    }
+  ]
+  

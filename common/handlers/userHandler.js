@@ -1,4 +1,7 @@
 const User = require("../../models").user;
+const Profile = require("../../models").profile;
+const Permission = require("../../models").permission;
+const Preference = require("../../models").preference;
 const sequelize = require("../../config/database/connection");
 
 exports.createUserHandler = async (data) => {
@@ -7,7 +10,10 @@ exports.createUserHandler = async (data) => {
         try {
           await User.create(
             data,
-            { transaction: t }
+            { 
+                transaction: t,
+                include: [Profile, Permission, Preference]
+            }
           );
         } catch (error) {
           console.log(error);

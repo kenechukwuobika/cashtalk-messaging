@@ -17,48 +17,6 @@ const {
     MESSAGE_DELETE_EVERYONE
 } = require('../../constants/socketEvents');
 
-
-exports.readMessage = socket => async (data) => {
-    await sequelize.transaction(async t => {
-        try {
-            const currentUser = socket.request.user;
-            console.log(currentUser.id)
-            const { chatRoomId } = data;
-
-            const messages = await Message.findAll({
-                where: {
-                    chatRoomId,
-                    senderId: {
-                        [Op.ne]: currentUser.id
-                    },
-                    id: {
-                        [Op.notIn]: sequelize.literal(`
-                            (SELECT "message"."id" FROM "messages" AS "message" INNER JOIN "messageReadBy" AS "messageReadBies" ON "message"."id" = "messageReadBies"."messageId" AND "messageReadBies"."userId" = '${currentUser.id}')
-                        `)
-                    },
-                }
-            });
-            
-            const messagesReadBy = [];
-
-            if(messages && messages.length !== 0){
-                messages.forEach(async message => {
-                    messagesReadBy.push({
-                        userId: currentUser.id,
-                        messageId: message.id
-                    })
-                })
-            }
-
-            const res = await MessageReadBy.bulkCreate(messagesReadBy)
-
-            socket.emit(MESSAGE_READ, res);
-        } catch (error) {
-            console.log(error)
-        }
-    });
-}
-
 exports.sendMessage = socket => async (data, callback) => {
     await sequelize.transaction(async t => {
         try {
@@ -155,11 +113,52 @@ exports.sendMessage = socket => async (data, callback) => {
             }
 
             recipients.forEach(recipient => {
-                socket.in(recipient).emit(MESSAGE_SEND, newMessage);
+                socket.in(recipient).emit(`MESSAGE_SEND`, newMessage);
             });
 
             io.of('/api/v1').in(currentUser.id).emit(MESSAGE_SEND, newMessage)
 
+        } catch (error) {
+            console.log(error)
+        }
+    });
+}
+
+exports.readMessage = socket => async (data) => {
+    await sequelize.transaction(async t => {
+        try {
+            const currentUser = socket.request.user;
+            console.log(currentUser.id)
+            const { chatRoomId } = data;
+
+            const messages = await Message.findAll({
+                where: {
+                    chatRoomId,
+                    senderId: {
+                        [Op.ne]: currentUser.id
+                    },
+                    id: {
+                        [Op.notIn]: sequelize.literal(`
+                            (SELECT "message"."id" FROM "messages" AS "message" INNER JOIN "messageReadBy" AS "messageReadBies" ON "message"."id" = "messageReadBies"."messageId" AND "messageReadBies"."userId" = '${currentUser.id}')
+                        `)
+                    },
+                }
+            });
+            
+            const messagesReadBy = [];
+
+            if(messages && messages.length !== 0){
+                messages.forEach(async message => {
+                    messagesReadBy.push({
+                        userId: currentUser.id,
+                        messageId: message.id
+                    })
+                })
+            }
+
+            const res = await MessageReadBy.bulkCreate(messagesReadBy)
+
+            socket.emit(MESSAGE_READ, res);
         } catch (error) {
             console.log(error)
         }
@@ -201,12 +200,12 @@ exports.startTyping = socket => async (data) => {
                 include: [Participant]
             });
             
-            if(!chatRoomId && !chatUserId){
-                console.log("Please provide a valid chat room or user id")
+            if(!chatRoom){
+                console.log("Please provide a valid chat room")
                 return;
             }
 
-            const data = {
+            const typingData = {
                 user: currentUser,
                 chatRoomId,
                 message: '...typing'
@@ -214,7 +213,7 @@ exports.startTyping = socket => async (data) => {
 
             chatRoom.participants.forEach(participant => {
                 if(participant.id !== currentUser.id){
-                    io.of('/api/v1').in(participant.userId).emit(TYPING_START, data)
+                    io.of('/api/v1').in(participant.userId).emit(TYPING_START, typingData)
                 }
             })
 
@@ -235,13 +234,15 @@ exports.stopTyping = socket => async (data) => {
             const chatRoom = await ChatRoom.findByPk(chatRoomId, {
                 include: [Participant]
             });
+
+            console.log(chatRoom)
             
-            if(!chatRoomId && !chatUserId){
-                console.log("Please provide a valid chat room or user id")
+            if(!chatRoom){
+                console.log("Please provide a valid chat room")
                 return;
             }
 
-            const data = {
+            const typingData = {
                 user: currentUser,
                 chatRoomId,
                 message: ''
@@ -249,7 +250,7 @@ exports.stopTyping = socket => async (data) => {
 
             chatRoom.participants.forEach(participant => {
                 if(participant.id !== currentUser.id){
-                    io.of('/api/v1').in(participant.userId).emit(TYPING_STOP, data)
+                    io.of('/api/v1').in(participant.userId).emit(TYPING_STOP, typingData)
                 }
             })
 

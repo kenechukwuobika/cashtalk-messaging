@@ -1,11 +1,10 @@
 const {
-    createGroupChat,
-    changeGroupChatName,
-    addAdminToGroupChat,
-    removeAdminFromGroupChat,
-    initiateChat,
-    changeGroupChatDesc,
-    leaveGroupChat,
+    createGroup,
+    changeGroupName,
+    addAdminToGroup,
+    removeAdminFromGroup,
+    changeGroupDesc,
+    leaveGroup,
     kickFromGroup
 } = require('./handlers/chatHandlers');
 
@@ -13,7 +12,8 @@ const {
     sendMessage,
     readMessage,
     startTyping,
-    stopTyping
+    stopTyping,
+    deleteMessageEveryone
 } = require('./handlers/messsageHandlers');
 
 const {

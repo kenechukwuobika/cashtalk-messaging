@@ -62,7 +62,7 @@ app.use((err, req, res, next) => {
 
 app.use((req, res) => res.status(500).send({ success: false }));
 
-httpServer.listen(process.env.PORT, async () => {
+httpServer.listen(process.env.PORT || 3000, async () => {
   await queue.initialize();
   await queue.consume();
   console.log(`Listening on port: ${process.env.PORT} 🌎`);

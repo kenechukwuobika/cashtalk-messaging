@@ -10,7 +10,6 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.user = require("./User")(sequelize, Sequelize);
-db.profile = require("./profile")(sequelize, Sequelize);
 db.message = require("./Message")(sequelize, Sequelize);
 db.deletedMessage = require("./DeletedMessage")(sequelize, Sequelize);
 db.messageReadBy = require("./MessageReadBy")(sequelize, Sequelize);

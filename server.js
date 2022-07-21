@@ -51,17 +51,17 @@ app.get("/", (req, res) => {
   res.send(`BoilerPlate v.1.0 ${new Date()}`);
 });
 
+httpServer.listen(process.env.PORT || 3000, async () => {
+  await queue.initialize();
+  await queue.consume();
+  console.log(`Listening on port: ${process.env.PORT} 🌎`);
+});
+
 // Handles all errors
 app.all('*', (req, res, next) => {
     next(new AppError(404, `Can't find ${req.originalUrl} on this server!`));
 });
 
 app.use(errorController);
-
-httpServer.listen(process.env.PORT || 3000, async () => {
-  await queue.initialize();
-  await queue.consume();
-  console.log(`Listening on port: ${process.env.PORT} 🌎`);
-});
 
 module.exports = app;

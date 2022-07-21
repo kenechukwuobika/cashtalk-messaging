@@ -5,7 +5,6 @@ const ChatInstance = require('../models').chatInstance;
 const Message = require('../models').message;
 const DeletedMessage = require('../models').deletedMessage;
 const Contact = require('../models').contact;
-const errorController = require('../controllers/errorController');
 const sequelize = require('../config/database/connection');
 
 exports.getContacts = async (req, res, next) => {
@@ -42,7 +41,6 @@ exports.getContacts = async (req, res, next) => {
 exports.syncContact = async (req, res, next) => {
     await sequelize.transaction(async t => {
         try {
-            console.log(req.body)
             let registeredContacts = [];
             const { user } = req;
             const { contactData } = req.body;
@@ -53,7 +51,6 @@ exports.syncContact = async (req, res, next) => {
                             phoneNumber: data.phoneNumber
                         }
                     })
-                    // console.log(registeredUser)
                     if(registeredUser){
                         const contact = await Contact.create({
                             userId: user.id,

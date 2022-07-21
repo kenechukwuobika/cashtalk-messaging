@@ -6,7 +6,8 @@ const httpServer = require("http").createServer(app);
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
-const { queue, protectRoute } = require("cashtalk-common");
+const { queue, protectRoute, errorController } = require("cashtalk-common");
+
 const wrap = require('./utilities/middlewareWrapper');
 const Websocket = require("./socket/Websocket");
 const router = require("./routes");
@@ -51,16 +52,11 @@ app.get("/", (req, res) => {
 });
 
 // Handles all errors
-app.use((err, req, res, next) => {
-  if (process.env.NODE_ENV === "production") {
-    return res.status(err.status || 400).send({ success: false });
-  }
-  return res
-    .status(err.status || 400)
-    .send({ success: false, message: err.message });
+app.all('*', (req, res, next) => {
+    next(new AppError(404, `Can't find ${req.originalUrl} on this server!`));
 });
 
-app.use((req, res) => res.status(500).send({ success: false }));
+app.use(errorController);
 
 httpServer.listen(process.env.PORT || 3000, async () => {
   await queue.initialize();

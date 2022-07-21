@@ -6,11 +6,9 @@ const Message = require('../models').message;
 const DeletedMessage = require('../models').deletedMessage;
 const ChatInstance = require('../models').chatInstance;
 const Participant = require('../models').participant;
-const errorController = require('./errorController');
 const sequelize = require('../config/database/connection');
 const queue = require('../common/events/queue');
 const {
-    CHAT_OPEN,
     CHAT_INITIATE,
     CHAT_GETALL,
     GROUPCHAT_CREATE,
@@ -18,7 +16,6 @@ const {
     CHAT_GETONE,
     CHAT_UPDATE,
     CHAT_DELETE,
-    MESSAGE_SEND,
 } = require('../constants/socketEvents');
 
 // exports.initiateChat = socket => async (data) => {

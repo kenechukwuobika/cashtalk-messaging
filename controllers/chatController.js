@@ -7,7 +7,6 @@ const Message = require('../models').message;
 const DeletedMessage = require('../models').deletedMessage;
 const MessageReadBy = require('../models').messageReadBy;
 const Profile = require('../models').profile;
-const errorController = require('../controllers/errorController');
 const NotFoundError = require('../error/NotFoundError');
 const sequelize = require('../config/database/connection');
 
@@ -33,6 +32,10 @@ exports.openChat = async (req, res, next) => {
             console.log(error);
         }
     })
+}
+
+exports.getChatObj = async (req, res, next) => {
+    // const 
 }
 
 exports.getAllChat = async (req, res, next) => {

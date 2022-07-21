@@ -6,7 +6,7 @@ const httpServer = require("http").createServer(app);
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
-const { queue, protectRoute, errorController } = require("cashtalk-common");
+const { queue, protectRoute, errorController, AppError } = require("cashtalk-common");
 
 const wrap = require('./utilities/middlewareWrapper');
 const Websocket = require("./socket/Websocket");

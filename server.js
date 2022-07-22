@@ -58,6 +58,9 @@ httpServer.listen(process.env.PORT || 3000, async () => {
 });
 
 // Handles all errors
+app.all('*', (req, res, next) => {
+    next(new AppError(404, `Can't find ${req.originalUrl} on this server!`));
+});
 
 app.use(errorController);
 

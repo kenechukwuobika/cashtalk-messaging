@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const { queue, protectRoute, errorController, AppError } = require("cashtalk-common");
 
+const listener = require('./libaries/listener');
 const wrap = require('./utilities/middlewareWrapper');
 const Websocket = require("./socket/Websocket");
 const router = require("./routes");
@@ -53,7 +54,7 @@ app.get("/", (req, res) => {
 
 httpServer.listen(process.env.PORT || 3000, async () => {
   await queue.initialize();
-  await queue.consume();
+  await queue.consume(listener);
   console.log(`Listening on port: ${process.env.PORT} 🌎`);
 });
 

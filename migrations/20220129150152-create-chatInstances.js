@@ -23,21 +23,12 @@ module.exports = {
                         type: Sequelize.UUID,
                         allowNull: false
                     },
-                    chatRoomType: {
-                        type: Sequelize.DataTypes.ENUM('normal', 'group'),
-                        defaultValue: 'normal',
-                        allowNull: false
-                    },
                     userId: {
                         type: Sequelize.UUID,
                         allowNull: false
                     },
                     chatUserId: {
                         type: Sequelize.UUID
-                    },
-                    unreadMessages: {
-                        type: Sequelize.INTEGER,
-                        defaultValue: 0
                     },
                     isArchived: {
                         type: Sequelize.BOOLEAN,

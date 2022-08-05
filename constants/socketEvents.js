@@ -9,6 +9,7 @@ module.exports = {
     
     MESSAGE_SEND: 'message:send',
     MESSAGE_READ: 'message:read',
+    MESSAGE_DELIVERED: 'message:delivered',
     MESSAGE_DELETE_EVERYONE: 'message:delete:everyone',
     TYPING_START: 'typing:start',
     TYPING_STOP: 'typing:stop',

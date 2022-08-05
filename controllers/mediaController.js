@@ -1,9 +1,10 @@
 const { Op } = require("sequelize");
-const sequelize = require('../config/database/connection');
 const aws = require("aws-sdk");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
+const { AppError } = require("cashtalk-common");
 
+const sequelize = require('../config/database/connection');
 
 const s3 = new aws.S3({
     region: process.env.AWS_REGION_NAME,

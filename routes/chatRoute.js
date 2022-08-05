@@ -16,7 +16,6 @@ router
 .get(chatController.getChatById)
 .delete(chatController.deleteChat)
 
-// router.post('/:chatRoomId/mute', chatController.muteChat)
 router.post('/:chatRoomId/archive', chatController.archiveChat)
 
 module.exports = router;

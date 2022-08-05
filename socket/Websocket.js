@@ -11,6 +11,7 @@ const {
 const {
     sendMessage,
     readMessage,
+    deliverMessage,
     startTyping,
     stopTyping,
     deleteMessageEveryone
@@ -27,6 +28,7 @@ const {
 
     MESSAGE_SEND,
     MESSAGE_READ,
+    MESSAGE_DELIVERED,
     MESSAGE_DELETE_EVERYONE,
     TYPING_START,
     TYPING_STOP
@@ -54,11 +56,7 @@ class Websocket{
 
     async setUpEvents(){
         this.socket.emit('signInSuccess', this.user);
-        const users = await user.findAll({
-            include: [profile]
-        }, [profile])
-        this.socket.emit('setInitialTotalUsers', users);
-        
+                
         this.socket.on(GROUPCHAT_CREATE, createGroup(this.socket));
         this.socket.on(GROUPCHAT_UPDATENAME, changeGroupName(this.socket));
         this.socket.on(GROUPCHAT_UPDATEDESC, changeGroupDesc(this.socket));
@@ -69,9 +67,14 @@ class Websocket{
         
         this.socket.on(MESSAGE_SEND, sendMessage(this.socket));
         this.socket.on(MESSAGE_READ, readMessage(this.socket));
+        this.socket.on(MESSAGE_DELIVERED, deliverMessage(this.socket));
         this.socket.on(MESSAGE_DELETE_EVERYONE, deleteMessageEveryone(this.socket));
         this.socket.on(TYPING_START, startTyping(this.socket));
         this.socket.on(TYPING_STOP, stopTyping(this.socket));
+        this.socket.on('disconnect', (data) => {
+            console.log('left')
+            console.log(this)
+        });
     }
 }
 

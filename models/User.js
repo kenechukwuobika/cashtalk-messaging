@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
         transactionPin: DataTypes.STRING,
     },
     {
+        defaultScope: {
+            attributes: {
+                exclude: ['transactionPin']
+            }
+        },
         sequelize,
         modelName: "user"
     });

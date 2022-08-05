@@ -33,7 +33,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         status: {
             type: DataTypes.STRING,
-            values: ['online', 'offline']
+            values: ['active', 'away', 'busy']
+        },
+        isConnected: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
         },
         lastSeen: {
             allowNull: false,

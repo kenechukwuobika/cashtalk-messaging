@@ -49,8 +49,8 @@ module.exports = {
                 },
                 status: {
                     type: Sequelize.ENUM,
-                    values: ['unread', 'read'],
-                    defaultValue: 'unread'
+                    values: ['sent', 'delivered', 'read'],
+                    defaultValue: 'sent'
                 },
                 text: {
                     allowNull: true,

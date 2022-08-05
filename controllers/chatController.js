@@ -6,55 +6,83 @@ const Participant = require('../models').participant;
 const Message = require('../models').message;
 const DeletedMessage = require('../models').deletedMessage;
 const MessageReadBy = require('../models').messageReadBy;
-const Profile = require('../models').profile;
-const NotFoundError = require('../error/NotFoundError');
+
+const { catchAsync, AppError } = require("cashtalk-common");
 const sequelize = require('../config/database/connection');
 
-exports.openChat = async (req, res, next) => {
-    await sequelize.transaction(async t => {
-        try {
-            const currentUser = req.user;
-            const { otherUserId } = req.body;
 
-            const userIds = [currentUser.id, otherUserId];
-            
-            const chatInstance = await ChatInstance.find({
-                user: currentUser.id,
-                otherUserId
-            });
-
-            if(!chatInstance){
-                userIds.forEach(userId => {
-                    
-                })
+/**
+* Get a replica of the chat object
+* 
+* @function
+* @param {Object} req - Express request object
+* @param {Object} res - Express response object
+* @param {Function} next - Express next middleware function
+* 
+*/
+exports.getChatObj = (req, res, next) => {
+    const chat = {
+        isGroupChat: false,
+        name: null,
+        avatar: null,
+        createdAt: "2022-05-30T09:07:05.271Z",
+        updatedAt: "2022-05-30T09:07:05.271Z",
+        unreadMessages: "1",
+        chatInstance: {
+            id: "4e145887-0846-4ad1-ab54-66c6af7994c9",
+            chatRoomId: "7df6eeaa-7b12-42e1-ba31-d5d44b7845f2",
+            userId: "9bb5af68-354c-49c1-bdec-c35fb4c52c01",
+            chatUserId: "9bb5af68-354c-49c1-bdec-c35fb4c52c02",
+            isArchived: false,
+            isDeleted: false,
+            createdAt: "2022-05-30T09:07:05.364Z",
+            updatedAt: "2022-05-30T09:07:05.364Z",
+            chatUser: {
+                id: "9bb5af68-354c-49c1-bdec-c35fb4c52c02",
+                phoneNumber: "07018867821",
+                createdAt: "2022-04-27T18:58:31.812Z",
+                updatedAt: "2022-04-27T18:58:31.812Z"
             }
-        } catch (error) {
-            console.log(error);
-        }
+        },
+        participants: [],
+        messages: []
+    };
+
+    res.status(200).json({
+        status: 'success',
+        chat
     })
 }
 
-exports.getChatObj = async (req, res, next) => {
-    // const 
-}
-
-exports.getAllChat = async (req, res, next) => {
-    await sequelize.transaction(async t => {
-        try {
-            const user = req.user;
-            const { page } = req.query;
+exports.getAllChat = catchAsync(
+    /**
+    * Get all chats for the current authenticated user
+    * 
+    * @function
+    * @param {Object} req - Express request object
+    * @param {Object} res - Express response object
+    * @param {Function} next - Express next middleware function
+    * 
+     */
+    async (req, res, next) => {
+        await sequelize.transaction(async t => {
+            const { user } = req;
+            // calculate limit and offset for pagination
             const limit = 1;
-            const offset = (page - 1) * limit || 0;
+            const offset = (req.query.page - 1) * limit || 0;
+
             const chats = await ChatRoom.findAll({
+                attributes:{
+                    include: [[sequelize.literal(`(SELECT COUNT(*) FROM "messages" WHERE "messages"."id" NOT IN (SELECT "messages"."id" FROM "messages" INNER JOIN "messageReadBy" ON "messages"."id" = "messageReadBy"."messageId" WHERE "messages"."id" = "messageReadBy"."messageId" ORDER BY "messages"."createdAt") AND "messages"."senderId" != '${user.id}' GROUP BY "messages"."chatRoomId")`), 'unreadMessages']]
+                },
                 include: [
                     {
                         model: ChatInstance,
                         where: { 
-                            userId: user.id
+                            userId: req.user.id
                         },
                         include: {
-                            model: User,
-                            as: 'chatUser'
+                            model: User, as: 'chatUser'
                         }
                     },
                     {
@@ -74,45 +102,51 @@ exports.getAllChat = async (req, res, next) => {
                         ],
                         limit,
                         offset,
-                        include: {
-                            model: MessageReadBy
-                            // attributes: [
-                            //     'id', 'userId', 'messageId',
-                            //     [sequelize.fn('COUNT', sequelize.col('MessageReadBy.userId')), 'm_userId']
-                            // ],
-                        }
-                    }
+                        include: [
+                            {
+                                model: User, as: 'sender'
+                            },
+                            {
+                                model: MessageReadBy
+                            }
+                        ]
+                    },
                 ]
             });
+
+            // check if chats exists
+            if(!chats){
+                return next(new AppError(400, "Could not get chats, please try again later"));
+            }
 
             res.status(200).json({
                 status: 'success',
                 result: chats.length,
                 chats
             })
+        });
+    }
+)
 
-        } catch (error) {
-            console.log(error)
-            res.status(400).json({
-                status: error.status,
-                message: error.message
-            })
-        }
-    });
-}
-
-exports.getChatById = async (req, res, next) => {
-    await sequelize.transaction(async t => {
-        try {
+exports.getChatById = catchAsync(
+    /**
+    * Get one chat by id for the current authenticated user
+    * 
+    * @function
+    * @param {Object} req - Express request object
+    * @param {Object} res - Express response object
+    * @param {Function} next - Express next middleware function
+    * 
+     */
+    async (req, res, next) => {
+        await sequelize.transaction(async t => {
             const { user } = req;
-            const { chatRoomId } = req.params;
-
             const chat = await ChatRoom.findOne({
                 where: {
                     id: {
                         [Op.and]: [
                             {
-                                [Op.eq]: chatRoomId
+                                [Op.eq]: req.params.chatRoomId
                             },
                             {
                                     [Op.in]: sequelize.literal(`
@@ -126,7 +160,7 @@ exports.getChatById = async (req, res, next) => {
                     { 
                         model: ChatInstance,
                         where: { 
-                            userId: user.id,
+                            userId: req.user.id,
                             isDeleted: false
                         }
                     },
@@ -139,27 +173,32 @@ exports.getChatById = async (req, res, next) => {
                 ],
             });
 
+            if(!chat){
+                return next(new AppError(404, "Chat not found"));
+            }
+
             res.status(200).json({
                 status: 'success',
                 chat
             })
-            
-        } catch (error) {
-            console.log(error)
-            res.status(400).json({
-                status: 'fail',
-                data: error.message
-            })
-        }
-    });
+        });
+    }
+)
 
-}
-
-exports.getChatByUsers = async (req, res, next) => {
-    await sequelize.transaction(async t => {
-        try {
+exports.getChatByUsers = catchAsync(
+    /**
+    * Get one chat with between the current authenticate user and another user
+    * 
+    * @function
+    * @param {Object} req - Express request object
+    * @param {Object} res - Express response object
+    * @param {Function} next - Express next middleware function
+    * 
+     */
+    async (req, res, next) => {
+        await sequelize.transaction(async t => {
+            const { user } = req;
             const { chatUserId } = req.query;
-            const user = await User.findByPk(req.user.id);
             
             const chat = await ChatRoom.findOne({
                 include: [
@@ -191,25 +230,27 @@ exports.getChatByUsers = async (req, res, next) => {
                 status: 'success',
                 data: chat
             })
-            
-        } catch (error) {
-            console.log(error)
-            res.status(400).json({
-                status: 'fail',
-                data: error.message
-            })
-        }
-    });
+                
+        });
+    }
+)
 
-}
-
-exports.archiveChat = async (req, res, next) => {
-    await sequelize.transaction(async t => {
-        try {
+exports.archiveChat = catchAsync(
+    /**
+    * Archive current chat for just the current authenticated user
+    * 
+    * @function
+    * @param {Object} req - Express request object
+    * @param {Object} res - Express response object
+    * @param {Function} next - Express next middleware function
+    * 
+     */
+    async (req, res, next) => {
+        await sequelize.transaction(async t => {
             const { chatRoomId } = req.params;
             const { isArchived } = req.body;
             const chatData = { isArchived };
-            const chatInstance = await ChatInstance.update(chatData, {
+            const [isChatInstanceUpdated, updatedChatInstance] = await ChatInstance.update(chatData, {
                 where: {
                     chatRoomId,
                     userId: req.user.id
@@ -217,32 +258,41 @@ exports.archiveChat = async (req, res, next) => {
                 returning: true
             });
 
-            const updatedChatInstance = chatInstance[1][0];
+            if(!isChatInstanceUpdated){
+                return next(new AppError(404, "Chat not found"));
+            }
 
             res.status(200).json({
                 status: 'success',
                 data: updatedChatInstance
             })
-        } catch (error) {
-            console.log(error)
-            res.status(400).json({
-                status: 'fail',
-                data: error.message
-            });
-        }
-    });
-}
+        
+        });
+    }
+)
 
-exports.deleteChat = async (req, res, next) => {
-    await sequelize.transaction(async t => {
-        try {
+exports.deleteChat = catchAsync(
+    /**
+    * Delete chat for just the current authenticated user
+    * 
+    * @function
+    * @param {Object} req - Express request object
+    * @param {Object} res - Express response object
+    * @param {Function} next - Express next middleware function
+    * 
+     */
+    async (req, res, next) => {
+        await sequelize.transaction(async t => {
             const userId = req.user.id;
             const { chatRoomId } = req.params;
+            
+            // check if message exists first
             const messages = await Message.findAll({
                 where: {
                     chatRoomId
                 }
             });
+
             if(messages || messages.length !== 0){
                 messages.forEach(async message => {
                     await DeletedMessage.create({
@@ -251,8 +301,10 @@ exports.deleteChat = async (req, res, next) => {
                     })
                 })
             }
+
+            // add message to deleted messages
             const chatData = { isDeleted: true };
-            const chatInstance = await ChatInstance.update(chatData, {
+            const [isChatInstanceUpdated, updatedChatInstance] = await ChatInstance.update(chatData, {
                 where: {
                     chatRoomId,
                     userId
@@ -260,20 +312,14 @@ exports.deleteChat = async (req, res, next) => {
                 returning: true
             });
 
-            const updatedChatInstance = chatInstance[1][0];
+            if(!isChatInstanceUpdated){
+                return next(new AppError(404, "Chat not found"));
+            }
 
             res.status(200).json({
                 status: 'success',
                 data: updatedChatInstance
             });
-            
-        } catch (error) {
-            console.log(error);
-            res.status(400).json({
-                status: 'fail',
-                data: error.message
-            });
-        }
-    });
-
-}
+        });
+    }
+)

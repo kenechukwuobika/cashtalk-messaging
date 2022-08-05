@@ -68,6 +68,10 @@ db.user.hasOne(db.participant)
 db.participant.belongsTo(db.user)
 
 db.chatRoom.hasMany(db.message)
+db.chatRoom.hasMany(db.message, {
+    foreignKey: 'chatRoomId',
+    as: 'messagesCount'
+})
 db.message.belongsTo(db.chatRoom)
 
 db.message.hasMany(db.deletedMessage)
@@ -75,6 +79,15 @@ db.deletedMessage.belongsTo(db.message)
 
 db.message.hasMany(db.messageReadBy)
 db.messageReadBy.belongsTo(db.message)
+
+db.user.hasMany(db.message, {
+    foreignKey: 'senderId',
+    as: 'sender'
+})
+db.message.belongsTo(db.user,  {
+    foreignKey: 'senderId',
+    as: 'sender'
+})
 
 // Refresh Databases
 // db.message.sync({ alter: true });

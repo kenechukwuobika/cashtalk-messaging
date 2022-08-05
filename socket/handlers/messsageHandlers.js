@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
-const { parse: uuidParse } = require("uuid");
 const sequelize = require('../../config/database/connection');
+const { AppError } = require("cashtalk-common");
+
 const Message = require('../../models').message;
 const MessageReadBy = require('../../models').messageReadBy;
 const User = require('../../models').user;
@@ -14,13 +15,13 @@ const {
     MESSAGE_SEND,
     TYPING_START,
     TYPING_STOP,
-    MESSAGE_DELETE_EVERYONE
+    MESSAGE_DELETE_EVERYONE,
+    MESSAGE_DELIVERED
 } = require('../../constants/socketEvents');
 
 exports.sendMessage = socket => async (data, callback) => {
     await sequelize.transaction(async t => {
         try {
-            // const currentUser = socket.request.user;
             let chatRoom = null;
             let recipients = null;
             let parsedMessage = false;
@@ -31,27 +32,19 @@ exports.sendMessage = socket => async (data, callback) => {
             const isBlocked = false;
             // const isBlocked = true;
             if(isBlocked){
-                errorHandler(socket, "Sorry, you are blocked by this user");
-                console.log("Sorry, you are blocked by this user");
-                return callback({
-                    status: 'fail',
-                    statusCode: 400,
-                    message: 'success'
-                });
+                return callback(errorHandler(403, "Please provide a valid chat room id or user id"));
             }
             
             const { chatRoomId, chatUserId, parentMesageId, type } = data;
             
             if(!chatRoomId && !chatUserId){
-                console.log("Please provide a valid chat room id or user id")
-                return;
+                return callback(errorHandler(400, "Please provide a valid chat room id or user id"));
             }
 
             if(chatRoomId){
                 chatRoom = await ChatRoom.findByPk(chatRoomId);
                 if(!chatRoom){
-                    console.log('chatRoom not found');
-                    return;  
+                    return callback(errorHandler(400, "chatRoom not found"));
                 }
             }
             else{
@@ -95,12 +88,12 @@ exports.sendMessage = socket => async (data, callback) => {
                     parsedMessage = parseContact(message, data);
                     break;
                 default:
-                    console.log('invalid message')
+                    callback(errorHandler(400, "invalid message"));
                     break;
             }
 
             if(!parsedMessage){
-                return;
+                return callback(errorHandler(400, "invalid message"));
             }
 
             const newMessage = await Message.create(message);
@@ -113,13 +106,17 @@ exports.sendMessage = socket => async (data, callback) => {
             }
 
             recipients.forEach(recipient => {
-                socket.in(recipient).emit(`MESSAGE_SEND`, newMessage);
+                socket.in(recipient).emit(MESSAGE_SEND, newMessage);
             });
 
             io.of('/api/v1').in(currentUser.id).emit(MESSAGE_SEND, newMessage)
+            callback({
+                status: 200
+            })
 
         } catch (error) {
             console.log(error)
+            return callback(errorHandler(500, "Something went wrong"));
         }
     });
 }
@@ -128,7 +125,6 @@ exports.readMessage = socket => async (data) => {
     await sequelize.transaction(async t => {
         try {
             const currentUser = socket.request.user;
-            console.log(currentUser.id)
             const { chatRoomId } = data;
 
             const messages = await Message.findAll({
@@ -160,7 +156,29 @@ exports.readMessage = socket => async (data) => {
 
             socket.emit(MESSAGE_READ, res);
         } catch (error) {
-            console.log(error)
+            return callback(errorHandler(500, "Something went wrong"));
+        }
+    });
+}
+
+exports.deliverMessage = socket => async (data) => {
+    await sequelize.transaction(async t => {
+        try {
+            const { messageId } = data;
+
+            const [ isMessageUpdated, message] = await Message.update({
+                status: "delivered"
+            }, 
+            {
+                where: {
+                    id: messageId
+                },
+                returning: true
+            });
+
+            socket.emit(MESSAGE_DELIVERED, message);
+        } catch (error) {
+            return callback(errorHandler(500, "Something went wrong"));
         }
     });
 }
@@ -183,7 +201,7 @@ exports.deleteMessageEveryone = socket => async (data) => {
 
             socket.emit(MESSAGE_DELETE_EVERYONE, messages);
         } catch (error) {
-            console.log(error)
+            return callback(errorHandler(500, "Something went wrong"));
         }
     });
 }
@@ -218,7 +236,7 @@ exports.startTyping = socket => async (data) => {
             })
 
         } catch (error) {
-            console.log(error)
+            return callback(errorHandler(500, "Something went wrong"));
         }
     });
 }
@@ -255,7 +273,7 @@ exports.stopTyping = socket => async (data) => {
             })
 
         } catch (error) {
-            console.log(error)
+            return callback(errorHandler(500, "Something went wrong"));
         }
     });
 }
@@ -274,7 +292,7 @@ const getChatByUsers = async (userId, chatUserId) => {
             ]
         }) 
     } catch (error) {
-        console.log(error)
+        return callback(errorHandler(404, "ChatRoom not found"));
     }
 }
 
@@ -291,8 +309,6 @@ const createChatByUsers = async (users) => {
 
         chatInstances.push(chatInstance);
     });
-
-    console.log(chatInstances)
     
     const chatRoom = await ChatRoom.create({
         chatInstance: [chatInstances]
@@ -301,6 +317,11 @@ const createChatByUsers = async (users) => {
             ChatInstance
         ]
     });
+
+    if(!chatRoom){
+        return callback(errorHandler(404, "Chatroom not found"));
+    }
+
     return chatRoom
 }
 

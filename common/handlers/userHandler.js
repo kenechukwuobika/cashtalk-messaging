@@ -24,6 +24,31 @@ exports.createUserHandler = async (data) => {
   }
 };
 
+exports.profileHandler = async (data) => {
+    try {
+        await sequelize.transaction(async t => {
+            try {
+                const [ updated, updatedProfile] = await Profile.update(
+                    data,
+                    {
+                        where: {
+                            userId: data.id
+                        },
+                        returning: true
+                    },
+                    {
+                        transaction: t,
+                    }
+                );
+            } catch (error) {
+              console.log(error);
+            }
+        });
+      } catch (error) {
+          console.log(error)
+      }
+}
+
 exports.deleteUser = async (data) => {
   await sequelize.transaction(async t => {
     try {

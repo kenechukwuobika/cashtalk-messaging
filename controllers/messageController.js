@@ -1,4 +1,6 @@
 const { Op } = require("sequelize");
+const { AppError } = require("cashtalk-common");
+
 const sequelize = require('../config/database/connection');
 const Message = require('../models').message;
 const MessageReadBy = require('../models').messageReadBy;
@@ -44,7 +46,7 @@ exports.getMessage = async (req, res, next) => {
     await sequelize.transaction(async t => {
         try {
             const { messageId } = req.params;
-            const messages = await Message.findOne({
+            const message = await Message.findOne({
                 where: {
                     id: {
                         [Op.eq]: messageId,
@@ -60,9 +62,13 @@ exports.getMessage = async (req, res, next) => {
                 ]
             });
 
+            if(!message){
+                return next(new AppError(404, "Message not found"));
+            }
+
             res.status(200).json({
                 status: 'success',
-                data: messages
+                data: message
             });
 
         } catch (error) {           
@@ -79,9 +85,16 @@ exports.getMessage = async (req, res, next) => {
 exports.deleteMessage = async (req, res, next) => {
     await sequelize.transaction(async t => {
         try {
+            const { messageId } = req.params;
+            const message = await Message.findByPk(messageId);
+
+            if(!message){
+                return next(new AppError(404, "Message not found"));
+            }
+
             const deletedMessage = await DeletedMessage.create({
                 userId: req.user.id,
-                messageId: req.params.messageId
+                messageId
             });
 
             res.status(200).json({

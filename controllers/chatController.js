@@ -1,11 +1,13 @@
 const { Op } = require("sequelize");
-const User = require('../models').user;
-const ChatRoom = require('../models').chatRoom;
-const ChatInstance = require('../models').chatInstance;
-const Participant = require('../models').participant;
-const Message = require('../models').message;
-const DeletedMessage = require('../models').deletedMessage;
-const MessageReadBy = require('../models').messageReadBy;
+const {
+    User,
+    ChatRoom,
+    ChatInstance,
+    Participant,
+    Message,
+    DeletedMessage,
+    MessageReadBy
+} = require('../models');
 
 const { catchAsync, AppError } = require("cashtalk-common");
 const sequelize = require('../config/database/connection');
@@ -70,7 +72,6 @@ exports.getAllChat = catchAsync(
             // calculate limit and offset for pagination
             const limit = 1;
             const offset = (req.query.page - 1) * limit || 0;
-
             const chats = await ChatRoom.findAll({
                 attributes:{
                     include: [[sequelize.literal(`(SELECT COUNT(*) FROM "messages" WHERE "messages"."id" NOT IN (SELECT "messages"."id" FROM "messages" INNER JOIN "messageReadBy" ON "messages"."id" = "messageReadBy"."messageId" WHERE "messages"."id" = "messageReadBy"."messageId" ORDER BY "messages"."createdAt") AND "messages"."senderId" != '${user.id}' GROUP BY "messages"."chatRoomId")`), 'unreadMessages']]

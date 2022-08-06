@@ -1,14 +1,15 @@
 const { Op } = require("sequelize");
 const sequelize = require('../../config/database/connection');
-const { AppError } = require("cashtalk-common");
+const {
+    Message,
+    MessageReadBy,
+    User,
+    ChatRoom,
+    ChatInstance,
+    Participant,
+    Preference
+} = require('../../models');
 
-const Message = require('../../models').message;
-const MessageReadBy = require('../../models').messageReadBy;
-const User = require('../../models').user;
-const ChatRoom = require('../../models').chatRoom;
-const ChatInstance = require('../../models').chatInstance;
-const Participant = require('../../models').participant;
-const Preference = require("../../models").preference;
 const errorHandler = require("./errorHandler");
 const {
     MESSAGE_READ,
@@ -110,12 +111,15 @@ exports.sendMessage = socket => async (data, callback) => {
             });
 
             io.of('/api/v1').in(currentUser.id).emit(MESSAGE_SEND, newMessage)
+
             callback({
-                status: 200
-            })
+                status: 200,
+                status: "success",
+                message: "Message sent successfully"
+            });
 
         } catch (error) {
-            console.log(error)
+            console.log(error);
             return callback(errorHandler(500, "Something went wrong"));
         }
     });
@@ -177,6 +181,13 @@ exports.deliverMessage = socket => async (data) => {
             });
 
             socket.emit(MESSAGE_DELIVERED, message);
+
+            callback({
+                status: 200,
+                status: "success",
+                message: "Message delivered successfully"
+            });
+
         } catch (error) {
             return callback(errorHandler(500, "Something went wrong"));
         }

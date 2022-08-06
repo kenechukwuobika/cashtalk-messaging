@@ -1,9 +1,12 @@
 const { Op } = require("sequelize");
 const sequelize = require('../../config/database/connection');
-const Message = require('../../models').message;
-const User = require('../../models').user;
-const ChatRoom = require('../../models').chatRoom;
-const Preference = require("../../models").preference;
+const {
+    Message,
+    User,
+    ChatRoom,
+    Preference
+} = require('../../models').message;
+
 const errorHandler = require("./errorHandler");
 const {
     MESSAGE_READ,

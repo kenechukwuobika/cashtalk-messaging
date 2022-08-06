@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const ChatInstance = require('../models').chatInstance;
+const { ChatInstance } = require('../models');
 const sequelize = require('../config/database/connection');
 
 exports.muteChat = async (req, res, next) => {

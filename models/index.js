@@ -1,5 +1,4 @@
 // const env = process.env.NODE_ENV
-const dotenv = require("dotenv").config();
 const Sequelize = require("sequelize");
 
 const sequelize = require("../config/database/connection");
@@ -9,86 +8,86 @@ const db = {};
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.user = require("./User")(sequelize, Sequelize);
-db.message = require("./Message")(sequelize, Sequelize);
-db.deletedMessage = require("./DeletedMessage")(sequelize, Sequelize);
-db.messageReadBy = require("./MessageReadBy")(sequelize, Sequelize);
-db.chatRoom = require("./ChatRoom")(sequelize, Sequelize);
-db.chatInstance = require("./ChatInstance")(sequelize, Sequelize);
-db.participant = require("./Participant")(sequelize, Sequelize);
-db.contact = require("./Contact")(sequelize, Sequelize);
+db.User = require("./User")(sequelize, Sequelize);
+db.Message = require("./Message")(sequelize, Sequelize);
+db.DeletedMessage = require("./DeletedMessage")(sequelize, Sequelize);
+db.MessageReadBy = require("./MessageReadBy")(sequelize, Sequelize);
+db.ChatRoom = require("./ChatRoom")(sequelize, Sequelize);
+db.ChatInstance = require("./ChatInstance")(sequelize, Sequelize);
+db.Participant = require("./Participant")(sequelize, Sequelize);
+db.Contact = require("./Contact")(sequelize, Sequelize);
 
-db.profile = require("./Profile")(sequelize, Sequelize);
-db.permission = require("./Permission")(sequelize, Sequelize);
-db.preference = require("./Preference")(sequelize, Sequelize);
+db.Profile = require("./Profile")(sequelize, Sequelize);
+db.Permission = require("./Permission")(sequelize, Sequelize);
+db.Preference = require("./Preference")(sequelize, Sequelize);
 
-db.user.hasOne(db.permission);
-db.permission.User = db.permission.belongsTo(db.user);
+db.User.hasOne(db.Permission);
+db.Permission.User = db.Permission.belongsTo(db.User);
 
-db.user.hasOne(db.preference);
-db.preference.User = db.preference.belongsTo(db.user);
+db.User.hasOne(db.Preference);
+db.Preference.User = db.Preference.belongsTo(db.User);
 
-db.user.hasOne(db.profile);
-db.profile.belongsTo(db.user);
+db.User.hasOne(db.Profile);
+db.Profile.belongsTo(db.User);
 
-db.chatRoom.belongsToMany(
-    db.user, 
+db.ChatRoom.belongsToMany(
+    db.User, 
     {
-        through: db.chatInstance,
+        through: db.ChatInstance,
         foreignKey: 'chatRoomId'
     }
 )
 
-db.user.belongsToMany(
-    db.chatRoom, 
+db.User.belongsToMany(
+    db.ChatRoom, 
     {
-        through: db.chatInstance,
+        through: db.ChatInstance,
         foreignKey: 'userId'
     }
 )
 
-db.chatRoom.hasOne(db.chatInstance)
-db.chatInstance.belongsTo(db.chatRoom)
+db.ChatRoom.hasOne(db.ChatInstance)
+db.ChatInstance.belongsTo(db.ChatRoom)
 
-db.user.hasMany(db.chatInstance)
-db.chatInstance.belongsTo(db.user, {
+db.User.hasMany(db.ChatInstance)
+db.ChatInstance.belongsTo(db.User, {
     foreignKey: 'userId',
     as: 'user'
 })
 
-db.chatInstance.belongsTo(db.user, {
+db.ChatInstance.belongsTo(db.User, {
     foreignKey: 'chatUserId',
     as: 'chatUser'
 })
 
-db.chatRoom.hasMany(db.participant)
-db.participant.belongsTo(db.chatRoom)
+db.ChatRoom.hasMany(db.Participant)
+db.Participant.belongsTo(db.ChatRoom)
 
-db.user.hasOne(db.participant)
-db.participant.belongsTo(db.user)
+db.User.hasOne(db.Participant)
+db.Participant.belongsTo(db.User)
 
-db.chatRoom.hasMany(db.message)
-db.chatRoom.hasMany(db.message, {
+db.ChatRoom.hasMany(db.Message)
+db.ChatRoom.hasMany(db.Message, {
     foreignKey: 'chatRoomId',
     as: 'messagesCount'
 })
-db.message.belongsTo(db.chatRoom)
+db.Message.belongsTo(db.ChatRoom)
 
-db.message.hasMany(db.deletedMessage)
-db.deletedMessage.belongsTo(db.message)
+db.Message.hasMany(db.DeletedMessage)
+db.DeletedMessage.belongsTo(db.Message)
 
-db.message.hasMany(db.messageReadBy)
-db.messageReadBy.belongsTo(db.message)
+db.Message.hasMany(db.MessageReadBy)
+db.MessageReadBy.belongsTo(db.Message)
 
-db.user.hasMany(db.message, {
+db.User.hasMany(db.Message, {
     foreignKey: 'senderId',
     as: 'sender'
 })
-db.message.belongsTo(db.user,  {
+db.Message.belongsTo(db.User,  {
     foreignKey: 'senderId',
     as: 'sender'
 })
 
 // Refresh Databases
-// db.message.sync({ alter: true });
+// db.Message.sync({ alter: true });
 module.exports = db;

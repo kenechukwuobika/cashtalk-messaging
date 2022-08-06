@@ -1,10 +1,14 @@
 const { Op } = require("sequelize");
 const sequelize = require('../../config/database/connection');
-const ChatRoom = require('../../models').chatRoom;
-const ChatInstance = require('../../models').chatInstance;
-const Participant = require('../../models').participant;
+const {
+    ChatRoom,
+    ChatInstance,
+    Participant,
+    Message
+} = require('../../models');
+
 const errorHandler = require("./errorHandler");
-const Message = require('../../models').message;
+
 const {
     GROUPCHAT_CREATE,
     GROUPCHAT_UPDATENAME,

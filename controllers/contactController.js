@@ -1,6 +1,5 @@
 const { catchAsync, AppError } = require("cashtalk-common");
-const User = require('../models').user;
-const Contact = require('../models').contact;
+const { User, Contact } = require('../models');
 const sequelize = require('../config/database/connection');
 
 exports.getContacts = catchAsync(

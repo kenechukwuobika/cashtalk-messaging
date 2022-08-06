@@ -2,9 +2,11 @@ const { Op } = require("sequelize");
 const { AppError } = require("cashtalk-common");
 
 const sequelize = require('../config/database/connection');
-const Message = require('../models').message;
-const MessageReadBy = require('../models').messageReadBy;
-const DeletedMessage = require('../models').deletedMessage;
+const {
+    Message,
+    MessageReadBy,
+    DeletedMessage
+} = require('../models');
 
 exports.getAllMessages = async (req, res, next) => {
     await sequelize.transaction(async t => {

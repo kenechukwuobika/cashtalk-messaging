@@ -15,7 +15,7 @@
     "aws-sdk": "^2.991.0",
     "axios": "^0.20.0",
     "body-parser": "^1.19.0",
-    "cashtalk-common": "git+https://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:x-oauth-basic@github.com/ObikaKelvin/cashtalk-common.git#c46a91a",
+    "cashtalk-common": "git+https://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:x-oauth-basic@github.com/ObikaKelvin/cashtalk-common.git#131ca42",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

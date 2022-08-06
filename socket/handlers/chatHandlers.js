@@ -4,7 +4,6 @@ const {
     ChatRoom,
     ChatInstance,
     Participant,
-    Message
 } = require('../../models');
 
 const errorHandler = require("./errorHandler");

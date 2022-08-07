@@ -1,7 +1,7 @@
 const { Model } = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
-    class MessageReadBy extends Model {
+    class ReadByRecipients extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
         }
     }
 
-    MessageReadBy.init({
+    ReadByRecipients.init({
         id: {
             primaryKey: true,
             type: DataTypes.UUID,
@@ -30,10 +30,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
         sequelize,
-        modelName: "messageReadBy",
+        modelName: "readByRecipients",
         freezeTableName: true,
         timestamps: true
     });
     
-    return MessageReadBy;
+    return ReadByRecipients;
 };

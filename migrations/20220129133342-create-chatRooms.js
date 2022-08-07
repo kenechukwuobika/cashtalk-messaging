@@ -33,7 +33,7 @@ module.exports = {
                     },
                     avatar: {
                         type: Sequelize.STRING,
-                        defaultValue: 'defaultChatGroup.jpg',
+                        defaultValue: 'group-chat-default.jpg',
                         allowNull: true,
                     },
                     createdAt: {

@@ -6,7 +6,8 @@ const {
     Participant,
     Message,
     DeletedMessage,
-    MessageReadBy
+    ReadByRecipients,
+    Profile
 } = require('../models');
 
 const { catchAsync, AppError } = require("cashtalk-common");
@@ -73,9 +74,6 @@ exports.getAllChat = catchAsync(
             const limit = 1;
             const offset = (req.query.page - 1) * limit || 0;
             const chats = await ChatRoom.findAll({
-                attributes:{
-                    include: [[sequelize.literal(`(SELECT COUNT(*) FROM "messages" WHERE "messages"."id" NOT IN (SELECT "messages"."id" FROM "messages" INNER JOIN "messageReadBy" ON "messages"."id" = "messageReadBy"."messageId" WHERE "messages"."id" = "messageReadBy"."messageId" ORDER BY "messages"."createdAt") AND "messages"."senderId" != '${user.id}' GROUP BY "messages"."chatRoomId")`), 'unreadMessages']]
-                },
                 include: [
                     {
                         model: ChatInstance,
@@ -83,11 +81,12 @@ exports.getAllChat = catchAsync(
                             userId: req.user.id
                         },
                         include: {
-                            model: User, as: 'chatUser'
+                            model: User, as: 'chatUser',
+                            include: {
+                                model: Profile,
+                                attributes: ["displayPicture"]
+                            }
                         }
-                    },
-                    {
-                        model: Participant
                     },
                     { 
                         model: Message,
@@ -105,15 +104,44 @@ exports.getAllChat = catchAsync(
                         offset,
                         include: [
                             {
-                                model: User, as: 'sender'
-                            },
-                            {
-                                model: MessageReadBy
+                                model: User, as: 'sender',
+                                include: {
+                                    model: Profile
+                                }
                             }
                         ]
                     },
                 ]
             });
+
+            const mmodifiedChats = [];
+
+            await Promise.all(chats.map(async (chat, index) => {
+                try {
+                    const unreadMessages = await Message.count({
+                        where: {
+                            chatRoomId: chat.id,
+                            id: {
+                                [Op.notIn]: sequelize.literal(`
+                                    (SELECT "messages"."id" FROM "messages" INNER JOIN "readByRecipients" ON "messages"."id" = "readByRecipients"."messageId" 
+                                    WHERE "messages"."id" = "readByRecipients"."messageId" ORDER BY "messages"."createdAt")
+                                `)
+                            },
+                            senderId: {
+                                [Op.not]: user.id
+                            }
+                        }
+                    })
+
+                    const chatObj = {...chats[index].dataValues}
+                    const { chatUser } = chatObj.chatInstance.dataValues;
+                    delete(chatObj.chatInstance.dataValues.chatUser)
+
+                    mmodifiedChats.push({...chatObj, chatUser, unreadMessages})
+                } catch (error) {
+                    console.log(error)
+                }
+            }));
 
             // check if chats exists
             if(!chats){
@@ -122,8 +150,8 @@ exports.getAllChat = catchAsync(
 
             res.status(200).json({
                 status: 'success',
-                result: chats.length,
-                chats
+                result: mmodifiedChats.length,
+                chats: mmodifiedChats
             })
         });
     }
@@ -229,7 +257,7 @@ exports.getChatByUsers = catchAsync(
 
             res.status(200).json({
                 status: 'success',
-                data: chat
+                chat
             })
                 
         });
@@ -265,7 +293,7 @@ exports.archiveChat = catchAsync(
 
             res.status(200).json({
                 status: 'success',
-                data: updatedChatInstance
+                chat: updatedChatInstance
             })
         
         });
@@ -319,7 +347,7 @@ exports.deleteChat = catchAsync(
 
             res.status(200).json({
                 status: 'success',
-                data: updatedChatInstance
+                chat: updatedChatInstance
             });
         });
     }

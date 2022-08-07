@@ -12,7 +12,7 @@ module.exports = {
         return queryInterface.sequelize
             .query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";')
             .then(() => {
-                return queryInterface.createTable("messageReadBy", {
+                return queryInterface.createTable("readByRecipients", {
                     id: {
                         allowNull: false,
                         defaultValue: Sequelize.literal("uuid_generate_v4()"),
@@ -48,6 +48,6 @@ module.exports = {
         return queryInterface.dropTable('users');
         */
 
-        await queryInterface.dropTable("messageReadBy");
+        await queryInterface.dropTable("readByRecipients");
     }
 };

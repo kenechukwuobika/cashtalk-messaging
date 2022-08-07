@@ -27,9 +27,8 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
         },
-        imageKey: {
-            type: DataTypes.STRING,
-            defaultValue: 'default-user.jpg'
+        displayPicture: {
+            type: DataTypes.STRING
         },
         status: {
             type: DataTypes.STRING,

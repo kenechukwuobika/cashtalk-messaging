@@ -4,8 +4,10 @@ const { AppError } = require("cashtalk-common");
 const sequelize = require('../config/database/connection');
 const {
     Message,
-    MessageReadBy,
-    DeletedMessage
+    ReadByRecipients,
+    DeletedMessage,
+    User,
+    Profile
 } = require('../models');
 
 exports.getAllMessages = async (req, res, next) => {
@@ -24,13 +26,23 @@ exports.getAllMessages = async (req, res, next) => {
                 order: [
                     ['createdAt', 'ASC']
                 ],
-                include: [MessageReadBy]
+                include: [
+                    {
+                        model: User, as: 'sender',
+                        include: {
+                            model: Profile
+                        }
+                    },
+                    {
+                        model: ReadByRecipients
+                    }
+                ]
             });
 
             res.status(200).json({
                 status: 'success',
                 result: messages.length,
-                data: messages
+                messages
             });
 
         } catch (error) {           
@@ -59,7 +71,10 @@ exports.getMessage = async (req, res, next) => {
                 },
                 include: [
                     {
-                        model: MessageReadBy,
+                        model: User, as: 'sender'
+                    },
+                    {
+                        model: ReadByRecipients,
                     }
                 ]
             });
@@ -70,7 +85,7 @@ exports.getMessage = async (req, res, next) => {
 
             res.status(200).json({
                 status: 'success',
-                data: message
+                message
             });
 
         } catch (error) {           
@@ -101,7 +116,7 @@ exports.deleteMessage = async (req, res, next) => {
 
             res.status(200).json({
                 status: 'success',
-                data: deletedMessage
+                message: deletedMessage
             });
 
         } catch (error) {           

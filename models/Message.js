@@ -31,8 +31,8 @@ module.exports = (sequelize, DataTypes) => {
         parentMesageId: {
             type: DataTypes.UUID
         },
-        recipientId: {
-            type: DataTypes.UUID
+        recipients: {
+            type: DataTypes.ARRAY(DataTypes.UUID)
         },
         gameId: {
             type: DataTypes.UUID

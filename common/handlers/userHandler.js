@@ -1,7 +1,9 @@
-const User = require("../../models").user;
-const Profile = require("../../models").profile;
-const Permission = require("../../models").permission;
-const Preference = require("../../models").preference;
+const {
+    User,
+    Profile,
+    Permission,
+    Preference
+} = require("../../models");
 const sequelize = require("../../config/database/connection");
 
 exports.createUserHandler = async (data) => {

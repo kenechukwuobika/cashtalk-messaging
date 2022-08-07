@@ -73,7 +73,6 @@ class Websocket{
         this.socket.on(TYPING_STOP, stopTyping(this.socket));
         this.socket.on('disconnect', (data) => {
             console.log('left')
-            console.log(this)
         });
     }
 }

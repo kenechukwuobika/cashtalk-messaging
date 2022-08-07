@@ -62,16 +62,18 @@ exports.createGroup = socket => async (data, callback) => {
                 return callback(errorHandler(400, "There must be at least two participants in a group"));
             }
 
-            console.log(participants)
 
             const chatRoom = await ChatRoom.create({
                 name,
                 isGroupChat: true,
                 chatInstance: [chatInstances],
-                participant: [participants]
+                participants: [participants]
             }, {
                 include: [
-                    Participant,
+                    {
+                        model: Participant,
+                        as: 'participants'
+                    },
                     ChatInstance
                 ]
             });
@@ -167,8 +169,6 @@ exports.addAdminToGroup = socket => async (data, callback) => {
         try {
             const currentUser = socket.request.user;
             const { otherUserId, chatRoomId } = data;
-            console.log(currentUser.id)
-            console.log(otherUserId)
             const currentParticipant = await Participant.findOne({
                 where: {
                     userId: currentUser.id,

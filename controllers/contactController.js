@@ -30,7 +30,7 @@ exports.getContacts = catchAsync(
             res.status(200).json({
                 status: 'success',
                 result: contacts.length,
-                data: contacts
+                contacts
             })
         });
     }
@@ -58,19 +58,15 @@ exports.syncContact = catchAsync(async (req, res, next) => {
                             contactPhoneNumber: registeredUser.phoneNumber,
                             contactName: data.name
                         });
-                        console.log(contact)
                         registeredContacts.push(data);
                     }
                 })
             }
 
-            console.log('registeredContacts')
-            console.log(registeredContacts)
-
             res.status(200).json({
                 status: 'success',
                 result: registeredContacts.length,
-                data: registeredContacts
+                contacts: registeredContacts
             })
             
         } catch (error) {
@@ -97,7 +93,7 @@ exports.deleteContact = catchAsync(async (req, res, next) => {
 
             res.status(200).json({
                 status: 'success',
-                data: contact
+                contact
             });
             
         } catch (error) {

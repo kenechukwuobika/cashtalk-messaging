@@ -11,7 +11,7 @@ db.Sequelize = Sequelize;
 db.User = require("./User")(sequelize, Sequelize);
 db.Message = require("./Message")(sequelize, Sequelize);
 db.DeletedMessage = require("./DeletedMessage")(sequelize, Sequelize);
-db.MessageReadBy = require("./MessageReadBy")(sequelize, Sequelize);
+db.ReadByRecipients = require("./ReadByRecipients")(sequelize, Sequelize);
 db.ChatRoom = require("./ChatRoom")(sequelize, Sequelize);
 db.ChatInstance = require("./ChatInstance")(sequelize, Sequelize);
 db.Participant = require("./Participant")(sequelize, Sequelize);
@@ -27,7 +27,9 @@ db.Permission.User = db.Permission.belongsTo(db.User);
 db.User.hasOne(db.Preference);
 db.Preference.User = db.Preference.belongsTo(db.User);
 
-db.User.hasOne(db.Profile);
+db.User.hasOne(db.Profile, {
+    foreignKey: "userId"
+});
 db.Profile.belongsTo(db.User);
 
 db.ChatRoom.belongsToMany(
@@ -38,8 +40,7 @@ db.ChatRoom.belongsToMany(
     }
 )
 
-db.User.belongsToMany(
-    db.ChatRoom, 
+db.User.belongsToMany(db.ChatRoom, 
     {
         through: db.ChatInstance,
         foreignKey: 'userId'
@@ -60,11 +61,14 @@ db.ChatInstance.belongsTo(db.User, {
     as: 'chatUser'
 })
 
-db.ChatRoom.hasMany(db.Participant)
+db.ChatRoom.hasOne(db.Participant, {
+    foreignKey: 'chatRoomId',
+    as: 'participants'
+})
 db.Participant.belongsTo(db.ChatRoom)
 
-db.User.hasOne(db.Participant)
-db.Participant.belongsTo(db.User)
+// db.User.hasOne(db.Participant)
+// db.Participant.belongsTo(db.User)
 
 db.ChatRoom.hasMany(db.Message)
 db.ChatRoom.hasMany(db.Message, {
@@ -76,8 +80,8 @@ db.Message.belongsTo(db.ChatRoom)
 db.Message.hasMany(db.DeletedMessage)
 db.DeletedMessage.belongsTo(db.Message)
 
-db.Message.hasMany(db.MessageReadBy)
-db.MessageReadBy.belongsTo(db.Message)
+db.Message.hasMany(db.ReadByRecipients)
+db.ReadByRecipients.belongsTo(db.Message)
 
 db.User.hasMany(db.Message, {
     foreignKey: 'senderId',

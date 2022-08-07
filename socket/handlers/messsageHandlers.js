@@ -2,7 +2,7 @@ const { Op } = require("sequelize");
 const sequelize = require('../../config/database/connection');
 const {
     Message,
-    MessageReadBy,
+    ReadByRecipients,
     User,
     ChatRoom,
     ChatInstance,
@@ -23,6 +23,7 @@ const {
 exports.sendMessage = socket => async (data, callback) => {
     await sequelize.transaction(async t => {
         try {
+            console.log(data)
             let chatRoom = null;
             let recipients = null;
             let parsedMessage = false;
@@ -60,6 +61,7 @@ exports.sendMessage = socket => async (data, callback) => {
                 type,
                 parentMesageId,
                 senderId: currentUser.id,
+                recipients,
                 readReceipts: currentUser.preference.readReceipts
             };
 
@@ -99,17 +101,19 @@ exports.sendMessage = socket => async (data, callback) => {
 
             const newMessage = await Message.create(message);
 
-            if(chatRoom.type === "group"){
-                recipients = chatRoom.participants;
+            if(chatRoom.isGroupChat){
+                newMessage.recipients = chatRoom.participants;
             }
             else{
-                recipients = [chatUserId];
+                newMessage.recipients = [chatUserId];
             }
 
-            recipients.forEach(recipient => {
+            console.log(newMessage.recipients)
+            newMessage.recipients.forEach(recipient => {
                 socket.in(recipient).emit(MESSAGE_SEND, newMessage);
             });
 
+            await newMessage.save();
             io.of('/api/v1').in(currentUser.id).emit(MESSAGE_SEND, newMessage)
 
             callback({
@@ -139,24 +143,24 @@ exports.readMessage = socket => async (data) => {
                     },
                     id: {
                         [Op.notIn]: sequelize.literal(`
-                            (SELECT "message"."id" FROM "messages" AS "message" INNER JOIN "messageReadBy" AS "messageReadBies" ON "message"."id" = "messageReadBies"."messageId" AND "messageReadBies"."userId" = '${currentUser.id}')
+                            (SELECT "message"."id" FROM "messages" AS "message" INNER JOIN "readByRecipients" ON "message"."id" = "readByRecipients"."messageId" AND "readByRecipients"."userId" = '${currentUser.id}')
                         `)
                     },
                 }
             });
             
-            const messagesReadBy = [];
+            const readByRecipients = [];
 
             if(messages && messages.length !== 0){
                 messages.forEach(async message => {
-                    messagesReadBy.push({
+                    readByRecipients.push({
                         userId: currentUser.id,
                         messageId: message.id
                     })
                 })
             }
 
-            const res = await MessageReadBy.bulkCreate(messagesReadBy)
+            const res = await ReadByRecipients.bulkCreate(readByRecipients)
 
             socket.emit(MESSAGE_READ, res);
         } catch (error) {
@@ -230,8 +234,7 @@ exports.startTyping = socket => async (data) => {
             });
             
             if(!chatRoom){
-                console.log("Please provide a valid chat room")
-                return;
+                return callback(errorHandler(400, "Please provide a valid chat room id"));
             }
 
             const typingData = {
@@ -264,11 +267,9 @@ exports.stopTyping = socket => async (data) => {
                 include: [Participant]
             });
 
-            console.log(chatRoom)
             
             if(!chatRoom){
-                console.log("Please provide a valid chat room")
-                return;
+                return callback(errorHandler(400, "Please provide a valid chat room id"));
             }
 
             const typingData = {
@@ -339,7 +340,7 @@ const createChatByUsers = async (users) => {
 const parseText = (message, data) => {
     const { text } = data;
     if(!text){
-        console.log("Please provide text");
+        callback(errorHandler(400, "Please provide text"));
         return false;
     }
 
@@ -350,7 +351,7 @@ const parseText = (message, data) => {
 const parsePhoto = (message, data) => {
     const { fileAccessKey, text } = data;
     if(!fileAccessKey){
-        console.log("Please provide file key");
+        callback(errorHandler(400, "Please provide file key"));
         return false;
     }
 
@@ -361,7 +362,7 @@ const parsePhoto = (message, data) => {
 const parseAttachment = (message, data) => {
     const { fileUrl, text } = data;
     if(!fileUrl){
-        console.log("Please provide file url");
+        return callback(errorHandler(400, "Please provide file url"));
         return false;
     }
 
@@ -373,12 +374,12 @@ const parseAttachment = (message, data) => {
 const parseLocation = (message, data) => {
     const { lat, long, text } = data;
     if(!lat){
-        console.log("Please provide latitude");
+        callback(errorHandler(400, "Please provide latitude"));
         return false;
     }
 
     if(!long){
-        console.log("Please provide longitude");
+        callback(errorHandler(400, "Please provide longitude"));
         return false;
     }
 
@@ -387,19 +388,18 @@ const parseLocation = (message, data) => {
         location_long: long, 
         text
     });
-    console.log(message);
     return true
 }
 
 const parseContact = (message, data) => {
     const { contactName, contactPhoneNumber } = data;
     if(!contactName){
-        console.log("Please provide contact name");
+        callback(errorHandler(400, "Please provide contact name"));
         return false;
     }
 
     if(!contactPhoneNumber){
-        console.log("Please provide contact phone number");
+        callback(errorHandler(400, "Please provide contact phone number"));
         return false;
     }
 

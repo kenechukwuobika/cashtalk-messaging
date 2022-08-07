@@ -43,30 +43,32 @@ exports.syncContact = catchAsync(async (req, res, next) => {
             const { user } = req;
             const { contactData } = req.body;
             
-            if(contactData){
-                await Promise.all(await contactData.map(async data => {
-                    const registeredUser = await User.findOne({
-                        where: {
-                            phoneNumber: data.phoneNumber
-                        }
-                    })
-                    
-                    if(registeredUser){
-                        const contact = await Contact.create({
-                            userId: user.id,
-                            contactId: registeredUser.id,
-                            contactPhoneNumber: registeredUser.phoneNumber,
-                            contactName: data.name
-                        });
-                        registeredContacts.push(data);
-                    }
-                }))
+            if(!contactData){
+                return next(new AppError(400, "Could not sync contacts"));
             }
+
+            const contacts = await Promise.all(await contactData.map(async data => {
+                const registeredUser = await User.findOne({
+                    where: {
+                        phoneNumber: data.phoneNumber
+                    }
+                })
+                
+                if(registeredUser){
+                    const contact = await Contact.create({
+                        userId: user.id,
+                        contactId: registeredUser.id,
+                        contactPhoneNumber: registeredUser.phoneNumber,
+                        contactName: data.name
+                    });
+                    registeredContacts.push(data);
+                }
+            }))
 
             res.status(200).json({
                 status: 'success',
-                result: registeredContacts.length,
-                contacts: registeredContacts
+                result: contacts.length,
+                contacts
             })
             
         } catch (error) {

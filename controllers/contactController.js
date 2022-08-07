@@ -39,7 +39,6 @@ exports.getContacts = catchAsync(
 exports.syncContact = catchAsync(async (req, res, next) => {
     await sequelize.transaction(async t => {
         try {
-            let registeredContacts = [];
             const { user } = req;
             const { contactData } = req.body;
             
@@ -55,13 +54,12 @@ exports.syncContact = catchAsync(async (req, res, next) => {
                 })
                 
                 if(registeredUser){
-                    const contact = await Contact.create({
+                    return await Contact.create({
                         userId: user.id,
                         contactId: registeredUser.id,
                         contactPhoneNumber: registeredUser.phoneNumber,
                         contactName: data.name
                     });
-                    registeredContacts.push(data);
                 }
             }))
 

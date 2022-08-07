@@ -8,7 +8,7 @@ router.use(protectRoute);
 
 router
 .route('/')
-.get(contactController.getContacts);
+.get(contactController.getContacts)
 
 router
 .route('/:contactId')

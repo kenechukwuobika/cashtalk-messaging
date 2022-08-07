@@ -46,27 +46,49 @@ exports.syncContact = catchAsync(async (req, res, next) => {
                 return next(new AppError(400, "Could not sync contacts"));
             }
 
-            const contacts = await Promise.all(await contactData.map(async data => {
+            const contacts = [];
+            await Promise.all(contactData.map(async data => {
                 const registeredUser = await User.findOne({
                     where: {
                         phoneNumber: data.phoneNumber
                     }
                 })
-                
+
                 if(registeredUser){
-                    return await Contact.create({
-                        userId: user.id,
-                        contactId: registeredUser.id,
-                        contactPhoneNumber: registeredUser.phoneNumber,
-                        contactName: data.name
-                    });
+                    const registeredContact = await Contact.findOne({
+                        where: {
+                            userId: registeredUser.id
+                        }
+                    })
+
+                    if(!registeredContact){
+                        try {
+                            const [contact, contactCreated] = await Contact.findOrCreate({
+                                where: {
+                                    userId: user.id,
+                                    contactId: registeredUser.id,
+                                },
+                                defaults: {
+                                    userId: user.id,
+                                    contactId: registeredUser.id,
+                                    contactPhoneNumber: registeredUser.phoneNumber,
+                                    contactName: data.name
+                                }
+                            });
+    
+                            contacts.push(contact);
+                        } catch (error) {
+                            console.log(error)
+                        }
+                    }
                 }
+
             }))
 
             res.status(200).json({
                 status: 'success',
                 result: contacts.length,
-                contacts
+                contacts: contacts
             })
             
         } catch (error) {

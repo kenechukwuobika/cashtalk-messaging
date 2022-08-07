@@ -44,7 +44,7 @@ exports.syncContact = catchAsync(async (req, res, next) => {
             const { contactData } = req.body;
             
             if(contactData){
-                await contactData.forEach(async data => {
+                await Promise.all(await contactData.map(async data => {
                     const registeredUser = await User.findOne({
                         where: {
                             phoneNumber: data.phoneNumber
@@ -60,7 +60,7 @@ exports.syncContact = catchAsync(async (req, res, next) => {
                         });
                         registeredContacts.push(data);
                     }
-                })
+                }))
             }
 
             res.status(200).json({

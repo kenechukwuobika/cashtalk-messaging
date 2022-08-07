@@ -44,7 +44,9 @@ exports.sendMessage = socket => async (data, callback) => {
             }
 
             if(chatRoomId){
-                chatRoom = await ChatRoom.findByPk(chatRoomId);
+                chatRoom = await ChatRoom.findByPk(chatRoomId, {
+                    include: [Participant]
+                });
                 if(!chatRoom){
                     return callback(errorHandler(400, "chatRoom not found"));
                 }
@@ -109,17 +111,15 @@ exports.sendMessage = socket => async (data, callback) => {
             }
 
             console.log(newMessage.recipients)
+            await newMessage.save();
             newMessage.recipients.forEach(recipient => {
                 socket.in(recipient).emit(MESSAGE_SEND, newMessage);
             });
 
-            await newMessage.save();
-            io.of('/api/v1').in(currentUser.id).emit(MESSAGE_SEND, newMessage)
-
-            callback({
-                status: 200,
+            return callback({
+                statusCode: 200,
                 status: "success",
-                message: "Message sent successfully"
+                message: newMessage
             });
 
         } catch (error) {
@@ -129,11 +129,12 @@ exports.sendMessage = socket => async (data, callback) => {
     });
 }
 
-exports.readMessage = socket => async (data) => {
+exports.readMessage = socket => async (data, callback) => {
     await sequelize.transaction(async t => {
         try {
             const currentUser = socket.request.user;
             const { chatRoomId } = data;
+            const senderIDs = [];
 
             const messages = await Message.findAll({
                 where: {
@@ -149,21 +150,37 @@ exports.readMessage = socket => async (data) => {
                 }
             });
             
-            const readByRecipients = [];
+            const readByRecipientsArray = [];
 
             if(messages && messages.length !== 0){
                 messages.forEach(async message => {
-                    readByRecipients.push({
+                    readByRecipientsArray.push({
                         userId: currentUser.id,
                         messageId: message.id
-                    })
+                    });
+
+                    senderIDs.push(message.senderId)
                 })
             }
 
-            const res = await ReadByRecipients.bulkCreate(readByRecipients)
+            const readByRecipients = await ReadByRecipients.bulkCreate(readByRecipientsArray)
+            console.log(senderIDs)
+            // socket.emit(MESSAGE_READ, res);
+            senderIDs.forEach(recipient => {
+                socket.in(recipient).emit(MESSAGE_READ, {
+                    readByRecipients,
+                    chatRoomId
+                });
+            });
 
-            socket.emit(MESSAGE_READ, res);
+            return callback({
+                statusCode: 200,
+                status: "success",
+                readByRecipients,
+                chatRoomId
+            });
         } catch (error) {
+            console.log(error)
             return callback(errorHandler(500, "Something went wrong"));
         }
     });
